@@ -3,6 +3,7 @@
 build-hurd.patch
 fix-appstream-metadata-path.diff
 fix-xvfb-path.patch
+lliurex_build.patch
 
 ## Misc.
 buildinfo.patch
@@ -16,4 +17,3 @@ conf-default-xsession.patch
 reproducible-build.patch
 systemd.patch
 typos.diff
-lliurex_build

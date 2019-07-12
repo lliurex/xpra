@@ -44,8 +44,6 @@ Depends: ${misc:Depends}, ${python3:Depends}, ${shlibs:Depends}
     ,xserver-xorg-video-dummy
 # Packet Encoding (http://xpra.org/trac/wiki/PacketEncoding):
     ,python3-rencode
-# package with www folder
-    ,xpra-www-data
 Recommends: ${misc:Recommends}
     ,keyboard-configuration
     ,gir1.2-appindicator3-0.1
@@ -122,8 +120,3 @@ Description: tool to detach/reattach running X programs
  Unlike VNC, these applications are "rootless".  They appear as individual
  windows inside your window manager rather than being contained within a single
  window.
-
-Package: xpra-www-data
-Architecture: any
-Depends: ${misc:Depends}
-Description: www folder for xpra-html5

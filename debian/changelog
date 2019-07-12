@@ -1,9 +1,9 @@
 xpra (2.5.2+lliurex2) bionic; urgency=medium
 
-  * Backport from eoan to bionic
+  * Backport from eoan
   * Add lliurex specific build patches
 
- -- Juanma Navarro Mañez <juanma1980@gmail.com>  Fri, 12 Jul 2019 12:25:58 +0200
+ -- Juanma Navarro Mañez <juanma1980@gmail.com>  Fri, 12 Jul 2019 14:14:50 +0200
 
 xpra (2.5.2+dfsg1-2) unstable; urgency=medium
 
