@@ -1,0 +1,25 @@
+Description: Fix path to Xorg binary in /etc/xpra/conf.d/55_server_x11.conf
+ We need the (absolute) path to the non-setuid binary and not to a possibly
+ installed setuid-wrapper (which requires root or login on a tty).
+ Auto-dection fails as Xorg is not installed in the build environment.
+ .
+ As the Xorg setuid wrapper is Debian specific (and might be removed in the
+ future) there's no need to upstream this change.
+Author: Simon Ruderich <simon@ruderich.org>
+Bug-Debian: https://bugs.debian.org/863891
+Forwarded: not-needed
+Last-Update: 2017-06-14
+
+--- a/setup.py
++++ b/setup.py
+@@ -840,8 +840,10 @@
+ 
+ def build_xpra_conf(install_dir):
+     #generates an actual config file from the template
+     xvfb_command = detect_xorg_setup(install_dir)
++    assert xvfb_command[0] == '/usr/lib/xorg/Xorg'
++    xvfb_command[0] = '/usr/lib/xorg/Xorg'
+     from xpra.platform.features import DEFAULT_ENV
+     def bstr(b):
+         if b is None:
+             return "auto"

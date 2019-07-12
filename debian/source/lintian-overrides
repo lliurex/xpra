@@ -1,0 +1,8 @@
+## All those files have insane-line-length-in-source-file:
+#xpra source: source-is-missing html5/js/lib/aurora/aac.js line length is 446 characters (>256)
+#xpra source: source-is-missing html5/js/lib/aurora/aurora.js line length is 842 characters (>512)
+#xpra source: source-is-missing html5/js/lib/aurora/aurora-xpra.js line length is 292 characters (>256)
+#xpra source: source-is-missing html5/js/lib/aurora/flac.js line length is 446 characters (>256)
+#xpra source: source-is-missing html5/js/lib/aurora/mp3.js line length is 446 characters (>256)
+#xpra source: source-is-missing html5/js/lib/broadway/Decoder.js line length is 31270 characters (>512)
+#xpra source: source-is-missing html5/js/lib/lz4.js line length is 496 characters (>256)

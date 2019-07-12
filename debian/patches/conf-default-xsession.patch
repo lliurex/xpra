@@ -1,0 +1,23 @@
+Last-Update: 2013-01-31
+Author: Dmitry Smirnov <onlyjob@member.fsf.org>
+Forwarded: not-needed
+Description: start Xsession by default
+ On "xpra start" it is useful to allow xsession to initialise
+ dbus, keyring-daemon, gpg-agent or whatever else might be starting
+ together with X as these days many applications depends on those services.
+ .
+ Upstream do not think it is useful outside of Debian.
+
+--- a/etc/xpra/conf.d/60_server.conf.in
++++ b/etc/xpra/conf.d/60_server.conf.in
+@@ -29,9 +29,9 @@
+ #start=/bin/true
+ #
+ # Xsession can take care of initializing dbus, keyring-daemon,
+ # gpg-agent or whatever else might be usually started together with X
+-#start = /etc/X11/Xsession true
++start = /etc/X11/Xsession true
+ # Or you can specify individual actions:
+ #xrdb -merge /etc/X11/Xresources
+ #xrdb -merge ~/.Xresources
+ #

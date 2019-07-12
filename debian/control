@@ -1,0 +1,122 @@
+Source: xpra
+Section: x11
+Priority: optional
+Standards-Version: 4.3.0
+Maintainer: Dmitry Smirnov <onlyjob@debian.org>
+Uploaders: أحمد المحمودي (Ahmed El-Mahmoudy) <aelmahmoudy@users.sourceforge.net>
+Build-Depends: debhelper (>= 12~) ,pkg-config ,dh-python
+    ,cython3 (>= 0.19)
+    ,libavcodec-dev (>= 7:3.1.3~)
+    ,libavformat-dev (>= 7:3.1.3~)
+    ,libavutil-dev (>= 7:3.1.3~)
+    ,libswscale-dev (>= 7:3.1.3~)
+    ,libvpx-dev (>= 1.6.0~)
+    ,libgtk-3-dev
+    ,libpam0g-dev
+    ,libsystemd-dev
+    ,libturbojpeg0-dev
+    ,libwebp-dev
+    ,libx11-dev
+    ,libx264-dev
+    ,libx265-dev
+    ,libxcomposite-dev
+    ,libxdamage-dev
+    ,libxext-dev
+    ,libxkbfile-dev
+    ,libxrandr-dev
+    ,libxtst-dev
+    ,python3-all-dev
+    ,python3-cairo-dev
+    ,python-gi-dev
+Homepage: http://xpra.org/
+Vcs-Git: https://salsa.debian.org/debian/xpra.git
+Vcs-Browser: https://salsa.debian.org/debian/xpra
+
+Package: xpra
+Architecture: any
+Depends: ${misc:Depends}, ${python3:Depends}, ${shlibs:Depends}
+    ,adduser
+    ,gir1.2-gtk-3.0
+#?  ,python3-cairo
+    ,python3-gi-cairo
+    ,x11-xserver-utils
+    ,xserver-xorg-input-void
+    ,xserver-xorg-video-dummy
+# Packet Encoding (http://xpra.org/trac/wiki/PacketEncoding):
+    ,python3-rencode
+Recommends: ${misc:Recommends}
+    ,keyboard-configuration
+    ,gir1.2-appindicator3-0.1
+    ,python3-numpy
+# SSH:
+    ,python3-paramiko
+    ,openssh-client
+    ,ssh-askpass
+# Packet Compression (http://xpra.org/trac/wiki/PacketEncoding):
+    ,python3-lz4
+    ,python3-lzo
+# PNG [png,png/L,png/P], JPEG and WebP (python-pil) support:
+    ,python3-pil
+# OpenGL support:
+    ,python3-opengl
+# Notifications forwarding:
+    ,python3-dbus
+# Proxy server:
+    ,python3-setproctitle
+# mDNS service autodiscovery
+    ,python3-zeroconf
+# Authentication:
+    ,python3-kerberos
+    ,python3-gssapi
+# start-session GUI:
+    ,python3-xdg
+# usr/lib/cups/backend/xpraforwarder
+    ,python3-uritools
+Suggests: openssh-server
+# OpenCL acceleration:
+    ,python3-pyopencl
+# Audio:
+#            [vorbis]
+    ,gstreamer1.0-plugins-base
+#   [wavpack, wav, flac, speex]          [mp3]                       [opus]
+    ,gstreamer1.0-plugins-good | gstreamer1.0-plugins-ugly | gstreamer1.0-plugins-bad
+    ,python3-gst-1.0
+    ,pulseaudio
+    ,pulseaudio-utils
+# For publishing servers via mDNS:
+#    ,python-avahi
+    ,python3-netifaces
+# Printer forwarding:
+    ,cups-client
+    ,cups-common
+    ,cups-filters
+    ,cups-pdf
+    ,python3-cups
+# Webcam forwarding:
+    ,python3-opencv
+    ,python3-pyinotify
+    ,v4l2loopback-dkms
+# Only useful when connecting using a JSON / YAML only client:
+    ,python3-yaml
+# misc accel.:
+    ,python3-uinput
+# AES encryption:
+    ,python3-cryptography
+# Nvidia NVENC support:
+#    ,python-pycuda
+#    ,libnvidia-encode1
+# HTML5 support:
+#    ,websockify
+# python-appindicator is not useful on Debian? Ubuntu only?
+#    ,python-appindicator
+#    ,gnome-shell-extension-appindicator
+Description: tool to detach/reattach running X programs
+ Xpra gives you the functionality of GNU Screen for X applications.
+ .
+ It allows the user to view remote X applications on their local machine, and
+ disconnect and reconnect from the remote machine without losing the state of
+ the running applications.
+ .
+ Unlike VNC, these applications are "rootless".  They appear as individual
+ windows inside your window manager rather than being contained within a single
+ window.

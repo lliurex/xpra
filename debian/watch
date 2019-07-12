@@ -1,0 +1,9 @@
+# uscan(1) configuration file.
+version=4
+
+## Current up-to-date fork:
+opts="\
+repack,compression=xz,repacksuffix=+dfsg1,\
+dversionmangle=s{[+~]dfsg\d*}{},\
+pgpsigurlmangle=s/$/.gpg/ \
+" https://xpra.org/src/xpra-(\d[0-9.]+)\.tar\.(?:xz|bz2|gz)

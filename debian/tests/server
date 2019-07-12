@@ -1,0 +1,59 @@
+#!/bin/sh
+
+set -x
+
+env
+id
+whoami
+pwd
+
+cat /etc/xpra/conf.d/55_server_x11.conf
+
+if [ "${XDG_RUNTIME_DIR}" = "" ]; then
+    export XDG_RUNTIME_DIR="${HOME}"
+fi
+
+trap "set +x; xpra stop :314 2>>/dev/null || true" EXIT
+
+xpra --version
+
+DISPLAY=:314 xset q 2>>/dev/null && exit 1
+printf ":: server is not running prior to start.\n"
+
+xpra start :314 --systemd-run=no --start-child=xeyes --exit-with-children \
+|| exit 1
+printf ":: server is starting.\n"
+
+DISPLAY=:314 timeout 11 sh -c 'until xset q 2>>/dev/null; do sleep 1; done'
+if [ "$?" -ne 0 ]; then
+    cat "${XDG_RUNTIME_DIR}"/xpra/:314.log \
+    || cat "${HOME}"/.xpra/:314.log
+
+    cat "${XDG_RUNTIME_DIR}"/xpra/Xorg.:314.log \
+    || cat "${HOME}"/.xpra/Xorg.:314.log
+    exit 1
+fi
+printf ":: DISPLAY became available.\n"
+
+printf ":: xpra list:\n"
+xpra list || exit 1
+
+xpra version :314 || exit 1
+printf ":: session exist.\n"
+
+pgrep xeyes || exit 1
+printf ":: 'xeyes' process is running (started earlier by --start-child).\n"
+
+DISPLAY=:314 timeout 8 xeyes
+ES="$?"
+if [ "${ES}" -ne 124 ]; then
+    printf "E: failed to start 'xeyes'\n" 1>&2
+    xpra stop :314 || true
+    exit 1
+fi
+printf ":: another 'xeyes' started successfully.\n"
+
+set -e
+printf ":: stopping server:\n"
+xpra stop :314 || true
+xpra version :314 2>>/dev/null || printf ":: [[ All good ]]\n"

@@ -1,0 +1,18 @@
+## Debian CI
+debian/.gitlab-ci.yml
+debian/.yamllint
+
+## Pre-built files:
+xpra/src_info.py
+xpra/build_info.py
+xpra/rencode/rencode.c
+xpra/stats/cymaths.c
+xpra/vpx/codec.c
+xpra/wait_for_x_server.c
+xpra/x264/codec.c
+xpra/xor/cyxor.c
+fakexinerama/libfakeXinerama.so*
+xpra/codecs/vpx/constants.pxi
+build/etc/xpra/xpra.conf
+xpra/server/cystats.c
+xpra/server/region.c

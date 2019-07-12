@@ -1,0 +1,19 @@
+
+## Fixes
+build-hurd.patch
+fix-appstream-metadata-path.diff
+fix-xvfb-path.patch
+
+## Misc.
+buildinfo.patch
+quality-levels.patch
+
+## Config customisations:
+conf-default-codec-order.patch
+conf-default-speaker.patch
+conf-default-xsession.patch
+
+reproducible-build.patch
+systemd.patch
+typos.diff
+lliurex_build

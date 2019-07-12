@@ -1,0 +1,1297 @@
+xpra (2.5.2+lliurex2) bionic; urgency=medium
+
+  * Backport from eoan to bionic
+  * Add lliurex specific build patches
+
+ -- Juanma Navarro Mañez <juanma1980@gmail.com>  Fri, 12 Jul 2019 12:25:58 +0200
+
+xpra (2.5.2+dfsg1-2) unstable; urgency=medium
+
+  * Upload to unstable
+  * d/gbp.conf: set debian branch to master
+
+ -- أحمد المحمودي (Ahmed El-Mahmoudy) <aelmahmoudy@users.sourceforge.net>  Thu, 04 Jul 2019 04:16:05 +0200
+
+xpra (2.5.2+dfsg1-1) experimental; urgency=medium
+
+  [ Dmitry Smirnov ]
+  * CI: timestamp build
+  * minor update to patch annotation
+  * New patch to fix FTBFS on hurd-i386.
+
+  [ أحمد المحمودي (Ahmed El-Mahmoudy) ]
+  * New upstream release.
+  * Minimize upstream signing key
+  * Add typos.diff patch to fix spelling mistakes
+
+ -- أحمد المحمودي (Ahmed El-Mahmoudy) <aelmahmoudy@users.sourceforge.net>  Thu, 13 Jun 2019 03:36:18 +0200
+
+xpra (2.5.1+dfsg1-2) experimental; urgency=medium
+
+  [ أحمد المحمودي (Ahmed El-Mahmoudy) ]
+  * Add gir1.2-gtk-3.0 to Depends (Closes: #927475).
+
+  [ Dmitry Smirnov ]
+  * New "reproducible-build.patch" from Amit Biswas (Closes: #913002).
+  * buildinfo.patch: don't alter LOCAL_MODIFICATIONS
+    (Closes: #927474, #927677).
+  * Build-Depends
+    + libxext-dev
+    + libxrandr-dev
+  * Recommends:
+    + gir1.2-appindicator3-0.1
+    + python3-gssapi
+    + python3-kerberos
+    + python3-numpy
+    + python3-opengl
+    + python3-setproctitle
+    + python3-xdg
+    + python3-zeroconf
+  * Suggests:
+    + python3-cryptography
+    + python3-pyinotify
+
+ -- Dmitry Smirnov <onlyjob@debian.org>  Mon, 22 Apr 2019 13:03:37 +1000
+
+xpra (2.5.1+dfsg1-1) experimental; urgency=medium
+
+  * Re-enable printing support.
+  * Fix dependency: python-uinput -> python3-uinput
+  * Override dh_python3 to force shebang of helper scripts to python3
+    (See: #926187)
+
+ -- أحمد المحمودي (Ahmed El-Mahmoudy) <aelmahmoudy@users.sourceforge.net>  Sat, 20 Apr 2019 10:08:03 +0200
+
+xpra (2.5+dfsg1-1) experimental; urgency=medium
+
+  * New upstream release (Closes: #925560)
+  * gbp.conf: set debian-branch to experimental
+  * Refresh patches
+  * Bumped to compat level 12
+  * Update copyright years
+  * Switch to Python3
+  * Disable printing support as it is still not supported in Python3
+  * Add xpra.manpages
+  * Remove dh_strip override, no longer needed as dbgsym migration is complete
+  * Remove compression=xz option, dpkg-deb should select suitable defaults
+
+ -- أحمد المحمودي (Ahmed El-Mahmoudy) <aelmahmoudy@users.sourceforge.net>  Sun, 07 Apr 2019 18:20:45 +0200
+
+xpra (2.4.3+dfsg1-1) unstable; urgency=medium
+
+  * New upstream release [January 2019].
+  * Standards-Version: 4.3.0.
+
+ -- Dmitry Smirnov <onlyjob@debian.org>  Sun, 20 Jan 2019 17:23:10 +1100
+
+xpra (2.4.2+dfsg1-1) unstable; urgency=medium
+
+  * New upstream release.
+
+ -- Dmitry Smirnov <onlyjob@debian.org>  Mon, 03 Dec 2018 14:02:19 +1100
+
+xpra (2.4.1+dfsg1-1) unstable; urgency=medium
+
+  * New upstream release.
+  * Recommends += "python-paramiko" (Closes: #912471).
+    Thanks, Ross Vandegrift.
+
+ -- Dmitry Smirnov <onlyjob@debian.org>  Thu, 01 Nov 2018 12:47:54 +1100
+
+xpra (2.4+dfsg1-1) unstable; urgency=medium
+
+  * New upstream release.
+  * Suggests += "python-uinput".
+
+ -- Dmitry Smirnov <onlyjob@debian.org>  Fri, 26 Oct 2018 08:20:26 +1100
+
+xpra (2.3.4+dfsg1-1) unstable; urgency=medium
+
+  [ Ondřej Nový ]
+  * d/copyright: Change Format URL to correct one
+
+  [ أحمد المحمودي (Ahmed El-Mahmoudy) ]
+  * Remove X-Python-Version field as it is not needed
+
+  [ Dmitry Smirnov ]
+  * New upstream release
+  * Build-Depends += "libsystemd-dev"
+
+ -- Dmitry Smirnov <onlyjob@debian.org>  Wed, 10 Oct 2018 14:19:28 +1100
+
+xpra (2.3.3+dfsg1-1) unstable; urgency=medium
+
+  * New upstream release
+  * Refresh patchws
+  * Updated standards version to 4.2.0
+
+ -- أحمد المحمودي (Ahmed El-Mahmoudy) <aelmahmoudy@users.sourceforge.net>  Mon, 27 Aug 2018 05:17:55 +0200
+
+xpra (2.3.2+dfsg1-2) unstable; urgency=medium
+
+  * Upload to unstable.
+  * New patch to fix path to Xorg binary (Closes: #863891).
+    Fixes error "Only console users are allowed to run the X server".
+    Thanks, Simon Ruderich.
+  * Install slightly corrected init script; more improvements needed.
+  * Install systemd service files.
+  * Added new patch with minor corrections to .service file.
+  * rules: do not enable and do not attempt to start service.
+  * Removed obsolete lintian-overrides.
+  * Removed needless dependency versioning from "keyboard-configuration".
+  * Build-Depends:
+    + libpam0g-dev
+    + libturbojpeg0-dev
+    + backports-friendly debhelper versioning.
+  * Recommends += "python-uritools".
+  * Suggests += "cups-client".
+  * copyright update, full 2.x coverage.
+  * copyright/Files-Excluded:
+    + win32/*.tlb
+    + xpra/platform/win32/setappid.cpp
+  * watch file to version 4.
+  * Standards-Version: 4.1.5; removed "get-orig-source" target.
+  * Introduced autopkgtest "server" test.
+
+ -- Dmitry Smirnov <onlyjob@debian.org>  Thu, 19 Jul 2018 19:01:07 +1000
+
+xpra (2.3.2+dfsg-1) experimental; urgency=medium
+
+  * New upstream release
+  * Bumped compat level to 11
+  * Add upstream metadata
+
+ -- أحمد المحمودي (Ahmed El-Mahmoudy) <aelmahmoudy@users.sourceforge.net>  Sat, 30 Jun 2018 03:32:41 +0200
+
+xpra (2.3.1+dfsg-1) experimental; urgency=medium
+
+  * New upstream release (Closes: #888333, #894805)
+  * Refresh patches.
+    Removed fix_spelling.diff, fix-systemd-service-path.patch patches, applied upstream
+  * Update standards version
+  * Update Vcs-* URLs
+  * Update copyright years
+
+ -- أحمد المحمودي (Ahmed El-Mahmoudy) <aelmahmoudy@users.sourceforge.net>  Mon, 25 Jun 2018 08:48:25 +0200
+
+xpra (2.1.3+dfsg-1) experimental; urgency=medium
+
+  [ أحمد المحمودي (Ahmed El-Mahmoudy) ]
+  * New upstream release (Closes: #864765)
+    + Provides systemd service files (Closes: #734475)
+  * Update my email address
+  * Refresh patches
+  * Added libavformat-dev to Build-Deps.
+  * Bumped compat level to 10
+  * Update standards version to 4.1.1
+  * Add patch to fix installation path of systemd service file.
+    Thanks to Simon Ruderich <simon@ruderich.org>
+  * Invoke setup.py with --without-html5 switch instead of disabling HTML5
+    using a patch
+    Thanks to Simon Ruderich <simon@ruderich.org>
+  * Passing destdir to dh_auto_install no more needed.
+    Thanks to Simon Ruderich <simon@ruderich.org>
+  * Add patch to fix appstream metadata install path
+  * Update copyright file
+  * Upstream removed fakeXinerama C library, hence dropped fakexinerama patch
+  * Enable x265 support
+  * Add fix_spelling.diff patch to fix spelling errors
+  * Switch to pybuild build system
+  * Add lintian overrides for source package
+  * debian/watch:
+    + Switch to secure URL.
+    + Remove winswitch mirror
+    + Add pgpurlmangling.
+    + Prefer xz over bz2
+
+  [ Dmitry Smirnov ]
+  * Updated gbp.conf for current repository layout.
+
+  [ أحمد المحمودي (Ahmed El-Mahmoudy) ]
+  * Update changelog
+  * Fix typos
+
+ -- أحمد المحمودي (Ahmed El-Mahmoudy) <aelmahmoudy@users.sourceforge.net>  Thu, 09 Nov 2017 10:43:51 +0100
+
+xpra (0.17.6+dfsg-1) unstable; urgency=medium
+
+  * New upstream release [October 2016].
+  * Build-Depends:
+    = libavcodec-dev (>= 7:3.1.3~)
+    = libvpx-dev (>= 1.6.0~)
+
+ -- Dmitry Smirnov <onlyjob@debian.org>  Fri, 11 Nov 2016 11:38:53 +1100
+
+xpra (0.17.5+dfsg-1) unstable; urgency=medium
+
+  * New upstream release [August 2016].
+  * Removed obsolete "build-ffmpeg3.1.patch".
+
+ -- Dmitry Smirnov <onlyjob@debian.org>  Mon, 29 Aug 2016 01:30:01 +1000
+
+xpra (0.17.4+dfsg-2) unstable; urgency=medium
+
+  * Added new patch to avoid FTBFS with FFmpeg 3.1 (Closes: #832863).
+
+ -- Dmitry Smirnov <onlyjob@debian.org>  Sat, 30 Jul 2016 11:56:16 +1000
+
+xpra (0.17.4+dfsg-1) unstable; urgency=medium
+
+  * New upstream release [June 2016].
+  * Updated "quality-levels.patch" to introduce new quality level (20%).
+  * Build-Depend on "debhelper (>= 9.20160403~)" due to .dbgsym package.
+
+ -- Dmitry Smirnov <onlyjob@debian.org>  Sun, 03 Jul 2016 21:17:08 +1000
+
+xpra (0.17.3+dfsg-1) unstable; urgency=medium
+
+  * New upstream release [June 2016].
+  * Vcs-Git URL to HTTPS.
+
+ -- Dmitry Smirnov <onlyjob@debian.org>  Mon, 06 Jun 2016 19:39:37 +1000
+
+xpra (0.17.2+dfsg-1) unstable; urgency=medium
+
+  * New upstream release [May 2016].
+
+ -- Dmitry Smirnov <onlyjob@debian.org>  Wed, 18 May 2016 22:43:32 +1000
+
+xpra (0.17.1+dfsg-1) unstable; urgency=medium
+
+  * New upstream release [May 2016].
+  * Suggests += "python-opencv, v4l2loopback-dkms" (webcam forwarding).
+  * Removed obsolete "1175.patch".
+  * Standards-Version: 3.9.8.
+  * dbgsym-migration: dropped "xpra-dbg" package.
+
+ -- Dmitry Smirnov <onlyjob@debian.org>  Sat, 07 May 2016 16:48:29 +1000
+
+xpra (0.16.3+dfsg-2) unstable; urgency=medium
+
+  * New upsteam patch to disable video detection when mmap is used.
+  * Refreshed "libav-no0RGB.patch" to fix FTBFS in jessie-backports
+    where "libav" is default (not "ffmpeg").
+
+ -- Dmitry Smirnov <onlyjob@debian.org>  Tue, 19 Apr 2016 20:29:48 +1000
+
+xpra (0.16.3+dfsg-1) unstable; urgency=medium
+
+  * New upstream release [March 2016].
+
+ -- Dmitry Smirnov <onlyjob@debian.org>  Sun, 27 Mar 2016 19:29:41 +1100
+
+xpra (0.16.2+dfsg-1) unstable; urgency=medium
+
+  * New upstream release [March 2016].
+  * Update to GStreamer 1.x (Closes: #785859).
+  * control:
+    + promote "python-rencode" to Depends (Closes: #805751).
+    + promote "python-dbus" to Recommends.
+    + Recommends += "keyboard-configuration".
+    + demote mDNS support to Suggests.
+    + added new Suggests for printer forwarding.
+    + HTTPS in Vcs-Browser URL.
+    + Standards-Version: 3.9.7.
+  * postinst,postrm: create/remove group "xpra"; Depends += "adduser".
+  * Dropped obsolete "1031.patch".
+  * Update "buildinfo.patch" to build reproducibly (Closes: #806974).
+    Thanks, Reiner Herrmann.
+
+ -- Dmitry Smirnov <onlyjob@debian.org>  Sun, 13 Mar 2016 19:21:32 +1100
+
+xpra (0.15.8+dfsg-1) unstable; urgency=medium
+
+  * New upstream release [November 2015].
+
+ -- Dmitry Smirnov <onlyjob@debian.org>  Mon, 16 Nov 2015 10:20:35 +1100
+
+xpra (0.15.6+dfsg-1) unstable; urgency=medium
+
+  * New upstream release [September 2015].
+
+ -- Dmitry Smirnov <onlyjob@debian.org>  Wed, 16 Sep 2015 23:32:50 +1000
+
+xpra (0.15.5+dfsg-1) unstable; urgency=medium
+
+  * New upstream release [August 2015].
+  * Removed "960.patch".
+
+ -- Dmitry Smirnov <onlyjob@debian.org>  Thu, 03 Sep 2015 00:57:50 +1000
+
+xpra (0.15.4+dfsg-1) unstable; urgency=low
+
+  * New upstream release [August 2015].
+    - Removed "libav10.patch".
+    - Disabled "libav-no0RGB.patch".
+    + Added "960.patch" to fix regression preventing detection of lz4.
+  * Upload to unstable.
+
+ -- Dmitry Smirnov <onlyjob@debian.org>  Sun, 23 Aug 2015 19:09:43 +1000
+
+xpra (0.15.3+dfsg-1) experimental; urgency=low
+
+  * New upstream release [July 2015].
+  * Removed obsolete "900.patch".
+
+ -- Dmitry Smirnov <onlyjob@debian.org>  Mon, 13 Jul 2015 21:44:19 +1000
+
+xpra (0.15.2+dfsg-2) experimental; urgency=medium
+
+  * New recommended upstream "900.patch" for regression.
+
+ -- Dmitry Smirnov <onlyjob@debian.org>  Tue, 30 Jun 2015 19:42:59 +1000
+
+xpra (0.15.2+dfsg-1) experimental; urgency=medium
+
+  * New upstream release [June 2015].
+
+ -- Dmitry Smirnov <onlyjob@debian.org>  Mon, 29 Jun 2015 19:04:38 +1000
+
+xpra (0.15.1+dfsg-1) experimental; urgency=low
+
+  * New upstream release [June 2015].
+
+ -- Dmitry Smirnov <onlyjob@debian.org>  Fri, 19 Jun 2015 13:22:32 +1000
+
+xpra (0.15.0+dfsg-1) experimental; urgency=low
+
+  * New upstream release [May 2015].
+  * Patches refreshed and updated; Dropped obsolete "648.patch".
+  * Recommends:
+    + python-rencode
+  * Files-Excluded += "tests/xpra/js/jquery*".
+  * debian/clean: added new leftover files.
+  * Updated Vcs-Browser URL.
+  * Dropped "old-libav.patch" and code to (un-)apply it conditionally;
+    Removed "quilt" from Build-Depends.
+
+ -- Dmitry Smirnov <onlyjob@debian.org>  Wed, 17 Jun 2015 23:50:17 +1000
+
+xpra (0.14.28+dfsg-2) unstable; urgency=medium
+
+  * New patch to fix upstream regression in client (Closes: #795877).
+    Thanks, Jamie Heilman.
+
+ -- Dmitry Smirnov <onlyjob@debian.org>  Tue, 18 Aug 2015 10:40:49 +1000
+
+xpra (0.14.28+dfsg-1) unstable; urgency=medium
+
+  * New upstream release [August 2015].
+
+ -- Dmitry Smirnov <onlyjob@debian.org>  Mon, 03 Aug 2015 19:54:17 +1000
+
+xpra (0.14.26+dfsg-1) unstable; urgency=low
+
+  * New upstream release [June 2015].
+
+ -- Dmitry Smirnov <onlyjob@debian.org>  Fri, 19 Jun 2015 13:47:23 +1000
+
+xpra (0.14.25+dfsg-1) unstable; urgency=medium
+
+  * New upstream release [June 2015].
+
+ -- Dmitry Smirnov <onlyjob@debian.org>  Thu, 11 Jun 2015 19:02:41 +1000
+
+xpra (0.14.24+dfsg-1) unstable; urgency=low
+
+  * New upstream release [May 2015].
+  * rules clean-up:
+    + dropped obsolete override_dh_builddeb.
+    + simplified get-orig-source in favour of native uscan repacking.
+  * Build-Depends:
+    + dh-python
+  * watch: added repacksuffix.
+  * Renamed "buildinfo-revision.patch" --> "buildinfo.patch";
+    updated the latter to reduce non-determinism in upstream build info.
+  * Upload to unstable.
+
+ -- Dmitry Smirnov <onlyjob@debian.org>  Thu, 21 May 2015 16:37:07 +1000
+
+xpra (0.14.18+dfsg-1) experimental; urgency=low
+
+  * New upstream release [January 2015].
+  * control: added compatibility package "python-imaging" as alternative
+    to "python-pil".
+  * copyright: added "Files-Excluded" section.
+
+ -- Dmitry Smirnov <onlyjob@debian.org>  Wed, 21 Jan 2015 17:00:56 +1100
+
+xpra (0.14.10+dfsg-1) unstable; urgency=medium
+
+  * New upstream release [October 2014].
+
+ -- Dmitry Smirnov <onlyjob@debian.org>  Tue, 28 Oct 2014 15:44:57 +1100
+
+xpra (0.14.9+dfsg-1) unstable; urgency=medium
+
+  * New upstream release [October 2014].
+  * Removed "661.patch".
+
+ -- Dmitry Smirnov <onlyjob@debian.org>  Wed, 08 Oct 2014 05:04:25 +1100
+
+xpra (0.14.8+dfsg-4) unstable; urgency=medium
+
+  * Yet another improvement to "661.patch".
+
+ -- Dmitry Smirnov <onlyjob@debian.org>  Mon, 06 Oct 2014 18:00:02 +1100
+
+xpra (0.14.8+dfsg-3) unstable; urgency=medium
+
+  * Updated "661.patch" with proper fix from upstream.
+    Thanks, Antoine Martin.
+
+ -- Dmitry Smirnov <onlyjob@debian.org>  Mon, 06 Oct 2014 06:20:36 +1100
+
+xpra (0.14.8+dfsg-2) unstable; urgency=medium
+
+  * New patch "661.patch" to fix keyboard layout switch (Xpra#661).
+  * Added bug-presubj note.
+
+ -- Dmitry Smirnov <onlyjob@debian.org>  Sat, 04 Oct 2014 20:58:20 +1000
+
+xpra (0.14.8+dfsg-1) unstable; urgency=medium
+
+  * New upstream release [October 2014].
+  * Dropped "657_681.patch".
+  * Removed obsolete "xpra.lintian-overrides".
+  * Build-Depends: bump libav dependencies to (>= 6:10.1).
+
+ -- Dmitry Smirnov <onlyjob@debian.org>  Fri, 03 Oct 2014 00:33:40 +1000
+
+xpra (0.14.6+dfsg-1) unstable; urgency=low
+
+  * New upstream release [September 2014].
+  * New "657_681.patch" to fix deadlock with GNOME 3.12 (Closes: #759202).
+  * Standards-Version to 3.9.6.
+
+ -- Dmitry Smirnov <onlyjob@debian.org>  Thu, 18 Sep 2014 14:29:01 +1000
+
+xpra (0.14.5+dfsg-1) unstable; urgency=low
+
+  * New upstream release [September 2014].
+  * New patch to set speaker forwarding "off" by default. Audio forwarding
+    consumes bandwidth even for silence so we're better forward sound only
+    when explicitly requested (from menu).
+
+ -- Dmitry Smirnov <onlyjob@debian.org>  Tue, 09 Sep 2014 16:00:47 +1000
+
+xpra (0.14.4+dfsg-1) unstable; urgency=low
+
+  * New upstream release [August 2014].
+  * Improved "buildinfo-revision.patch" for better compatibily with older
+    dpkg versions (Closes: #759386); Thanks, Simon Ruderich.
+
+ -- Dmitry Smirnov <onlyjob@debian.org>  Sun, 31 Aug 2014 02:06:58 +1000
+
+xpra (0.14.3+dfsg-1) unstable; urgency=low
+
+  * New upstream release [August 2014].
+  * Build-Depends:
+    + libxkbfile-dev
+    + python-gi-dev
+    - python-gobject-dev
+  * Depends:
+    + python-gi-cairo
+  * Recommends:
+    + python-lzo
+    - python-webm
+    - python-imaging
+    + python-pil
+  * Patches:
+    - 7245.patch
+    - unbundle-webm.patch
+    - conf-default-speaker.patch
+    + 648.patch
+    + conf-default-codec-order.patch
+  * Extended "buildinfo-revision.patch" to inject package version.
+  * "get-orig-source":
+    - dropped obsolete "webm" removal.
+  * Removed obsolete "debian/xpra.install".
+  * Install Xpra FAQ once.
+  * Fixed build options:
+    - Droped worthless "override_dh_auto_configure".
+    + Pass build options to "dh_auto_build" and "dh_auto_install".
+    + Build using "--with-verbose --with-Xdummy --without-Xdummy_wrapper".
+
+ -- Dmitry Smirnov <onlyjob@debian.org>  Mon, 25 Aug 2014 06:21:18 +1000
+
+xpra (0.13.9+dfsg-1) unstable; urgency=medium
+
+  * New upstream release [August 2014].
+    + Patched removed:
+      - max-packet-size.patch
+      - non-obscuring-spinners.patch
+      - 72[46..63].patch
+
+ -- Dmitry Smirnov <onlyjob@debian.org>  Tue, 19 Aug 2014 11:40:31 +1000
+
+xpra (0.13.8+dfsg-2) unstable; urgency=medium
+
+  * Patchworks (thanks, Antoine):
+    + "max-packet-size.patch" to fix potential client crash on very large
+       windows/resolutions.
+    + "non-obscuring-spinners.patch" to prevent hiding window contents.
+    + "72*.patch" to fix failure to start remote server (Closes: #723058).
+  * Recommend "python-lz4".
+
+ -- Dmitry Smirnov <onlyjob@debian.org>  Thu, 14 Aug 2014 00:43:33 +1000
+
+xpra (0.13.8+dfsg-1) unstable; urgency=low
+
+  * New upstream release [August 2014].
+  * Depart from Python apps team; updated Mainatainer field.
+
+ -- Dmitry Smirnov <onlyjob@debian.org>  Sat, 09 Aug 2014 15:57:32 +1000
+
+xpra (0.13.7+dfsg-1) unstable; urgency=medium
+
+  * New upstream release [July 2014].
+    - removed obsolete "597.patch".
+  * Add new "quality-levels.patch" to introduce new quality levels.
+  * De-activated "conf-default-min-quality.patch".
+  * "gbp.conf": import-orig/merge = false.
+  * Removed inactive co-maintainer Miguel Landaeta from Uploaders.
+
+ -- Dmitry Smirnov <onlyjob@debian.org>  Sun, 20 Jul 2014 11:23:47 +1000
+
+xpra (0.13.6+dfsg-1) unstable; urgency=medium
+
+  * New upstream release [June 2014].
+    + backported "597.patch" (Closes: #752500).
+  * Removed obsolete patches, minor refresh.
+  * Disabled x264 OpenCL support -- it makes things slower and may cause
+    stability problems.
+    - removed "enable-x264-opencl.patch".
+    - dropped versioned Build-Dependency on "libx264-dev"
+      (package is backports-friendly again).
+
+ -- Dmitry Smirnov <onlyjob@debian.org>  Thu, 03 Jul 2014 03:30:41 +1000
+
+xpra (0.13.5+dfsg-1) unstable; urgency=low
+
+  * New upstream release [June 2014].
+    + backported "599.patch".
+  * "libwebp-dev" added to Build-Depends for "webp" encoding support.
+
+ -- Dmitry Smirnov <onlyjob@debian.org>  Sat, 14 Jun 2014 12:00:00 +1000
+
+xpra (0.13.4+dfsg-1) unstable; urgency=low
+
+  * New upstream release [June 2014].
+
+ -- Dmitry Smirnov <onlyjob@debian.org>  Wed, 11 Jun 2014 22:05:03 +1000
+
+xpra (0.13.3+dfsg-1) unstable; urgency=low
+
+  * New upstream release [June 2014].
+    + refreshed patches.
+  * get-orig-source: remove python-webm tests.
+
+ -- Dmitry Smirnov <onlyjob@debian.org>  Sat, 07 Jun 2014 07:07:01 +1000
+
+xpra (0.12.7+dfsg-1) unstable; urgency=low
+
+  * New upstream release [May 2014].
+  * Build and install private fakeXinerama:
+    + new "fakexinerama.patch".
+    + minor update to "README.Debian".
+
+ -- Dmitry Smirnov <onlyjob@debian.org>  Sat, 31 May 2014 13:07:16 +1000
+
+xpra (0.12.6+dfsg-1) unstable; urgency=low
+
+  * New upstream release [May 2014].
+
+ -- Dmitry Smirnov <onlyjob@debian.org>  Fri, 16 May 2014 20:39:22 +1000
+
+xpra (0.12.3+dfsg-1) unstable; urgency=low
+
+  * New upstream release [April 2014].
+
+ -- Dmitry Smirnov <onlyjob@debian.org>  Thu, 10 Apr 2014 08:50:52 +1000
+
+xpra (0.12.2+dfsg-1) unstable; urgency=low
+
+  * New upstream release [March 2014].
+  * Build-Depends:
+    + pkg-config
+    + libavutil-dev
+  * Added lintian-override for false-positives "spelling-error-in-binary".
+  * Enabled "xpra-dbg" package.
+
+ -- Dmitry Smirnov <onlyjob@debian.org>  Mon, 31 Mar 2014 13:05:15 +1100
+
+xpra (0.11.6+dfsg-1) unstable; urgency=low
+
+  * New upstream release [March 2014].
+
+ -- Dmitry Smirnov <onlyjob@debian.org>  Tue, 18 Mar 2014 19:03:09 +1100
+
+xpra (0.11.4+dfsg-1) unstable; urgency=medium
+
+  * New upstream release [March 2014].
+  * Demoted "python-pyopencl" from Recommends to Suggests (Closes: #739078).
+  * New "libav10.patch" to fix FTBFS (Closes: #739459).
+  * Updated "old-libav.patch" for backporting.
+
+ -- Dmitry Smirnov <onlyjob@debian.org>  Tue, 04 Mar 2014 08:58:20 +1100
+
+xpra (0.11.3+dfsg-1) unstable; urgency=low
+
+  * New upstream release [February 2014].
+  * New patch to enable OpenCL acceleration.
+    + versioned dependency: "libx264-dev (>= 2:0.133.2339+git585324f)".
+    + added "python-pyopencl" to Recommends.
+  * Fixed patch order sequence.
+  * New Recommends:
+    + python-avahi
+    + python-netifaces
+
+ -- Dmitry Smirnov <onlyjob@debian.org>  Sat, 15 Feb 2014 18:02:28 +1100
+
+xpra (0.11.2+dfsg2-1) unstable; urgency=low
+
+  [ Dmitry Smirnov ]
+  * copyright update for 0.11, excluding "html5/*"
+
+  [ أحمد المحمودي (Ahmed El-Mahmoudy) ]
+  * Remove html5/ during DFSG-repackaging.
+  * Added disable_html5.patch to disable HTML5 client.
+  * debian/control: Remove libjs-swfobject from Depends.
+  * debian/xpra.links: remove swfobject.js symlink.
+  * debian/rules: Remove logic handling *.js files.
+
+ -- أحمد المحمودي (Ahmed El-Mahmoudy) <aelmahmoudy@sabily.org>  Mon, 03 Feb 2014 14:51:48 +0200
+
+xpra (0.11.2+dfsg-1) unstable; urgency=low
+
+  * New upstream release [January 2014].
+    + Removed assume_YUV420P_old_clients.patch, as it is applied upstream
+    + Refreshed patches.
+  * debian/rules:
+    + Remove embedded copy of swfobject.js
+    + Remove executable bit from web_socket.js
+  * debian/control: add libjs-swfobject to Depends.
+  * debian/xpra.links: add symlink to libjs-swfobject's swfobject.js
+
+ -- أحمد المحمودي (Ahmed El-Mahmoudy) <aelmahmoudy@sabily.org>  Mon, 03 Feb 2014 05:07:12 +0200
+
+xpra (0.10.12+dfsg-1) unstable; urgency=low
+
+  * New upstream release [January 2014].
+
+ -- Dmitry Smirnov <onlyjob@debian.org>  Tue, 14 Jan 2014 22:37:19 +1100
+
+xpra (0.10.11+dfsg-1) unstable; urgency=low
+
+  * New upstream release [January 2014].
+  * Dropped "r5009-fix-tooltip.patch".
+  * Re-freshed "unbundle-webm.patch".
+
+ -- Dmitry Smirnov <onlyjob@debian.org>  Thu, 09 Jan 2014 08:12:05 +1100
+
+xpra (0.10.10+dfsg-1) unstable; urgency=low
+
+  * New upstream release [December 2013].
+  * "python-gtkglext1" promoted to Recommends to encourage OpenGL
+    acceleration.
+  * New backported "r5009-fix-tooltip.patch" to fix tooltip info regression.
+  * Standards to 3.9.5
+
+ -- Dmitry Smirnov <onlyjob@debian.org>  Fri, 20 Dec 2013 03:07:41 +1100
+
+xpra (0.10.9+dfsg-1) unstable; urgency=low
+
+  * New upstream release [November 2013].
+
+ -- Dmitry Smirnov <onlyjob@debian.org>  Thu, 07 Nov 2013 10:49:11 +1100
+
+xpra (0.10.8+dfsg-1) unstable; urgency=low
+
+  * New upstream release [October 2013]
+    + fixed crashes with buggy "fglrx" drivers.
+
+ -- Dmitry Smirnov <onlyjob@debian.org>  Wed, 23 Oct 2013 01:07:25 +1100
+
+xpra (0.10.6+dfsg-1) unstable; urgency=low
+
+  * New upstream release [October 2013].
+    + fixed host name in window titles (Closes: #725076).
+
+ -- Dmitry Smirnov <onlyjob@debian.org>  Tue, 15 Oct 2013 15:50:36 +1100
+
+xpra (0.10.4+dfsg-2) unstable; urgency=low
+
+  * Bumped to cython (>= 0.19) in Build-Dep
+  * Added assume_YUV420P_old_clients.patch patch to workaround for really
+    old/broken clients: assume YUV420P (LP: #1223985)
+
+ -- أحمد المحمودي (Ahmed El-Mahmoudy) <aelmahmoudy@sabily.org>  Fri, 13 Sep 2013 10:03:16 +0200
+
+xpra (0.10.4+dfsg-1) unstable; urgency=low
+
+  * New upstream release [September 2013].
+
+ -- Dmitry Smirnov <onlyjob@debian.org>  Wed, 11 Sep 2013 10:45:35 +1000
+
+xpra (0.10.3+dfsg-1) unstable; urgency=low
+
+  * New upstream release [September 2013].
+  * Upload to unstable.
+
+ -- Dmitry Smirnov <onlyjob@debian.org>  Mon, 09 Sep 2013 23:19:15 +1000
+
+xpra (0.10.1+dfsg-1) experimental; urgency=low
+
+  * New upstream release [August 2013].
+  * Patchworks:
+    + dropped "conf-audio-codecs.patch" (applied-upstream).
+    + new "libav-no0RGB.patch" to fix FTBFS with "libav-9.8".
+    + updated "old-libav.patch" to fix FTBFS with "libav (< 9.1)".
+    + new "unbundle-webm.patch" to use system "python-webm".
+  * Added "python-webm" to Recommends;
+    updated get-orig-source to remove webm files from orig.tar;
+    removed "libwebp4 | libwebp2" from Depends.
+  * "python-wimpiggy" is gone, removed all traces of it.
+
+ -- Dmitry Smirnov <onlyjob@debian.org>  Sun, 25 Aug 2013 04:17:03 +1000
+
+xpra (0.9.8+dfsg-1) unstable; urgency=low
+
+  * New upstream release [July 2013].
+
+ -- Dmitry Smirnov <onlyjob@debian.org>  Tue, 30 Jul 2013 10:48:05 +1000
+
+xpra (0.9.6+dfsg-1) unstable; urgency=low
+
+  * New upstream release [June 2013].
+  * Depends on "libwebp4 | libwebp2" (Closes: 713017).
+  * Reference get-orig-source implementation.
+
+ -- Dmitry Smirnov <onlyjob@debian.org>  Mon, 01 Jul 2013 03:53:54 +1000
+
+xpra (0.9.5+dfsg-1) unstable; urgency=low
+
+  * New upstream release [June 2013].
+    + fixed timeout for SSH connection and password prompt
+      (Closes: #710866, #710868).
+    + fixed clickable area after resolution change (Closes: #710991).
+
+ -- Dmitry Smirnov <onlyjob@debian.org>  Fri, 07 Jun 2013 00:30:01 +1000
+
+xpra (0.9.4+dfsg-1) unstable; urgency=low
+
+  * New upstream release [May 2013].
+
+ -- Dmitry Smirnov <onlyjob@debian.org>  Tue, 28 May 2013 12:04:21 +1000
+
+xpra (0.9.2+dfsg-1) unstable; urgency=low
+
+  * New upstream release [May 2013].
+  * Dropped backported/applied-upstream patches.
+
+ -- Dmitry Smirnov <onlyjob@debian.org>  Tue, 14 May 2013 15:31:20 +1000
+
+xpra (0.9.1+dfsg-1) unstable; urgency=low
+
+  * New upstream release [May 2013].
+  * Added "X-Python-Version: >= 2.7" to avoid deprecated python-2.6.
+  * New patches:
+    + to avoid calling "cython" on (dh_auto_)clean (backported).
+    + to fix build information warning (Xpra#332).
+    + to use revision from file "svn-revision" for build_info.
+    + to build with libav (<< 6:9.1).
+  * Conditionally apply "old-libav.patch" according to detected "libav"
+    version for backportability; "quilt" added to Build-Depends.
+  * Relaxed (dropped) versioned build-dependencies on "libavcodec-dev"
+    and "libswscale-dev".
+  * Upload to unstable.
+
+ -- Dmitry Smirnov <onlyjob@debian.org>  Mon, 13 May 2013 12:01:52 +1000
+
+xpra (0.9.0+dfsg-1~exp0) experimental; urgency=low
+
+  * New upstream release [April 2013].
+  * Dropped backported "r2738.patch".
+  * Removed unnecessary version dependency from "python-all-dev".
+  * Updated gstreamer plugins in Suggests according to updated list of
+    supported audio codecs.
+  * Added "python-gtkglext1" to Suggests (required by OpenGL support
+    that is still experimental and disabled by default).
+  * Added new "conf-audio-codecs.patch" to update list of supported
+    audio codecs in "xpra.conf" file.
+  * Updated comments in debian/control.
+  * Updated my email address.
+
+ -- Dmitry Smirnov <onlyjob@debian.org>  Thu, 25 Apr 2013 11:07:23 +1000
+
+xpra (0.8.8+dfsg-1~exp0) experimental; urgency=low
+
+  * New upstream release [March 2013].
+
+ -- Dmitry Smirnov <onlyjob@member.fsf.org>  Thu, 07 Mar 2013 09:13:46 +1100
+
+xpra (0.8.7+dfsg-1~exp0) experimental; urgency=low
+
+  * New upstream release [February 2013].
+    + Fixed upstream bug #259 "mishandling multiple desktops".
+
+ -- Dmitry Smirnov <onlyjob@member.fsf.org>  Tue, 26 Feb 2013 11:32:06 +1100
+
+xpra (0.8.5+dfsg-1~exp0) experimental; urgency=low
+
+  * New major upstream release [February 2013].
+    + Fixes run-time crash with x264 and new libav-9.1
+      thanks to Anton Khirnov and Reinhard Tartler;
+      (Closes: #699722).
+    * Bumped libav Build-Depends [libavcodec-dev,libswscale-dev]
+      to (>= 6:9.1) in order to avoid FTBFS with older versions.
+    * No longer Recommend the following packages that are needed only
+      for future OpenGL functionality:
+      - python-gtkglext1
+      - python-opengl
+    * New Suggests:
+      + gstreamer0.10-plugins-ugly
+      + python-gst0.10
+      + pulseaudio
+      + pulseaudio-utils
+  * Added comments regarding the purpose of packages in
+    Depends/Recommends/Suggests to debian/control.
+  * debian/copyright is updated.
+  * Patchworks ([+] new; [-] dropped):
+    - [conf-default-encoding]: no longer override default encoding to PNG;
+      x264 is a new default.
+    + [conf-default-min-quality] to bump default min-quality to avoid
+      some visual distortions.
+    + [conf-default-speaker] to disable default audio forwarding
+      (it is still incomplete and buggy).
+    + [_debug_x11] (inactive) to enable debugging of X11 errors.
+    + [r2738] to correct X11 error trapping.
+
+ -- Dmitry Smirnov <onlyjob@member.fsf.org>  Tue, 19 Feb 2013 09:56:19 +1100
+
+xpra (0.7.8+dfsg-1~exp0) experimental; urgency=low
+
+  * New upstream release [January 2013].
+
+ -- Dmitry Smirnov <onlyjob@member.fsf.org>  Wed, 16 Jan 2013 18:52:56 +1100
+
+xpra (0.7.6+dfsg-1~exp0) experimental; urgency=low
+
+  * New upstream release [December 2012].
+  * Dropped obsolete "DM-Upload-Allowed: yes".
+
+ -- Dmitry Smirnov <onlyjob@member.fsf.org>  Wed, 02 Jan 2013 15:16:49 +1100
+
+xpra (0.7.5+dfsg-1~exp0) experimental; urgency=low
+
+  * New upstream release [December 2012].
+
+ -- Dmitry Smirnov <onlyjob@member.fsf.org>  Fri, 07 Dec 2012 09:27:54 +1100
+
+xpra (0.7.4+dfsg-1~exp0) experimental; urgency=low
+
+  * New upstream release.
+
+ -- Dmitry Smirnov <onlyjob@member.fsf.org>  Sat, 17 Nov 2012 23:09:45 +1100
+
+xpra (0.7.3+dfsg-1~exp0) experimental; urgency=low
+
+  * New upstream release.
+  * "ssh-askpass" moved to Recommends from Depends (Closes: #693093);
+    removed redundant "ssh-askpass-fullscreen" alternative.
+  * "openssh-client" promoted to Recommends (from Suggests)
+    to satisfy all dependencies for client connectivity over SSH.
+
+ -- Dmitry Smirnov <onlyjob@member.fsf.org>  Wed, 14 Nov 2012 10:27:47 +1100
+
+xpra (0.7.2+dfsg-1~exp1) experimental; urgency=low
+
+  * added "ssh-askpass | ssh-askpass-fullscreen" to Build-Depends.
+  * updated conf-default-xsession.patch to fix Xsession start-up.
+
+ -- Dmitry Smirnov <onlyjob@member.fsf.org>  Tue, 13 Nov 2012 00:09:24 +1100
+
+xpra (0.7.2+dfsg-1~exp0) experimental; urgency=low
+
+  * New upstream release.
+
+ -- Dmitry Smirnov <onlyjob@member.fsf.org>  Wed, 07 Nov 2012 21:58:12 +1100
+
+xpra (0.7.1+dfsg-1~exp0) experimental; urgency=low
+
+  * New upstream release.
+
+ -- Dmitry Smirnov <onlyjob@member.fsf.org>  Wed, 24 Oct 2012 10:54:25 +1100
+
+xpra (0.7.0+dfsg-1~exp0) experimental; urgency=low
+
+  * New upstream release.
+  * d/clean is updated and alphabetised.
+  * d/copyright is updated.
+  * d/control:
+    * Standards to 3.9.4
+    * Build-Depends on newer "cython (>= 0.16)".
+    * xpra/Depends:
+      + Added "libwebp2" (new "webp" encoding).
+      + Added "xserver-xorg-input-void".
+      + Added "xserver-xorg-video-dummy".
+      - Dropped "xvfb".
+      - Moved "python-dbus" to Suggests (as advised by upstream).
+      - Moved "python-imaging" to Recommends (as advised by upstream).
+    * Added "keyboard-configuration (<< 1.82)" to Breaks
+      (fixes keypad keys forwarding Xpra#180).
+    * Added -dbg packages [xpra-dbg,python-wimpiggy-dbg] (commented)
+      and corresponding override_dh_strip in debian/rules.
+  * d/rules:
+    - dropped dh_compress override (no longer needed).
+    + build with "bindnow" hardening.
+  * d/watch: added mirror.
+  * New patches:
+    + [conf-default-encoding] to use PNG encoding by default.
+    + [conf-default-xsession] to start Xsession automatically.
+  * d/README.Debian:
+    + updated Xdummy custom resolution instructions.
+    + added paragraph explaining -dpi.
+  * Dropped sample Xdummy configuration as it is now installed as
+    conffile "/etc/xpra/xorg.conf".
+
+ -- Dmitry Smirnov <onlyjob@member.fsf.org>  Tue, 09 Oct 2012 14:09:19 +1100
+
+xpra (0.3.11+dfsg-1) unstable; urgency=low
+
+  * New upstream release.
+  * New backported patch to fix crash on pop-up tooltip windows.
+  * VCS links are updated for new repository at collab-maint.
+
+ -- Dmitry Smirnov <onlyjob@member.fsf.org>  Tue, 09 Oct 2012 13:13:52 +1100
+
+xpra (0.3.10+dfsg-1) unstable; urgency=low
+
+  * New upstream release.
+
+ -- أحمد المحمودي (Ahmed El-Mahmoudy) <aelmahmoudy@sabily.org>  Wed, 26 Sep 2012 16:03:44 +0200
+
+xpra (0.3.9+dfsg-2) unstable; urgency=low
+
+  * Override dh_compress to prevent compression of example conf file.
+    (Closes: #688235)
+
+ -- أحمد المحمودي (Ahmed El-Mahmoudy) <aelmahmoudy@sabily.org>  Fri, 21 Sep 2012 07:43:42 +0200
+
+xpra (0.3.9+dfsg-1) unstable; urgency=low
+
+  [ أحمد المحمودي (Ahmed El-Mahmoudy) ]
+  * New upstream release.
+  * debian/README.Debian: Remove Known issues section, it is invalidated with
+    0.3.6 release.
+  * debian/rules: Allow overriding of VER in get-orig-source.
+
+  [ Dmitry Smirnov ]
+  * debian/rules: export LDFLAGS using DEB_LDFLAGS_MAINT_APPEND.
+  * debian/xpra.install: install only *.png icons.
+  * Remove debian/parti.* (we're not shipping parti).
+  * Publicly expose xpra modules.
+    + Dropped private-pkg.diff patch.
+    + debian/xpra.install: install xpra modules publicly.
+  * debian/watch: corrected version mangle (Closes: #674964)
+  * Removing debian/repack in favour of get-orig-source
+  * binary and source compression to xz:
+    + debian/rules: added override for dh_builddeb
+    + Added debian/source/options
+  * debian/copyright: add missing copyright paragraph.
+
+ -- أحمد المحمودي (Ahmed El-Mahmoudy) <aelmahmoudy@sabily.org>  Wed, 19 Sep 2012 13:45:58 +0200
+
+xpra (0.3.6+dfsg-1) unstable; urgency=low
+
+  [ أحمد المحمودي (Ahmed El-Mahmoudy) ]
+  * debian/control: Added Dmitry Smirnov to Uploaders
+  * New upstream release. (Closes: #683133)
+
+  [ Dmitry Smirnov ]
+  * Remove debian/docs
+  * debian/copyright:
+    + Consolidated and updated copyright info.
+    + Update copyright format.
+  * debian/control: added Recommends: xserver-xorg-video-dummy
+  * debian/rules: avoid dropping LDFLAGS when passing --as-needed (fixes
+    Hardening)
+  * install sample 'dummy.xorg.conf' and README.Debian with instructions
+    how to use Xdummy (Closes: #681051).
+  * separating man pages from .install to .manpages
+
+ -- أحمد المحمودي (Ahmed El-Mahmoudy) <aelmahmoudy@sabily.org>  Sat, 18 Aug 2012 17:57:15 +0200
+
+xpra (0.3.4+dfsg-1) unstable; urgency=low
+
+  * New upstream release.
+
+ -- أحمد المحمودي (Ahmed El-Mahmoudy) <aelmahmoudy@sabily.org>  Wed, 25 Jul 2012 10:03:25 +0200
+
+xpra (0.3.3+dfsg-1) unstable; urgency=low
+
+  * New upstream release.
+
+ -- أحمد المحمودي (Ahmed El-Mahmoudy) <aelmahmoudy@sabily.org>  Wed, 11 Jul 2012 16:57:20 +0200
+
+xpra (0.3.2+dfsg-1) unstable; urgency=low
+
+  * New upstream release.
+  * debian/xpra.install: Install xpra_launcher manpage.
+
+ -- أحمد المحمودي (Ahmed El-Mahmoudy) <aelmahmoudy@sabily.org>  Mon, 04 Jun 2012 16:52:33 +0200
+
+xpra (0.3.1+dfsg-3) unstable; urgency=low
+
+  * Removed xpra_launcher.diff patch, it was wrong !
+  * debian/xpra.install: Install xpra_launcher
+  * debian/private_pkg.diff: also add /usr/lib/xpra to sys.path for
+    xpra_launcher script.
+
+ -- أحمد المحمودي (Ahmed El-Mahmoudy) <aelmahmoudy@sabily.org>  Sun, 03 Jun 2012 19:37:44 +0200
+
+xpra (0.3.1+dfsg-2) unstable; urgency=low
+
+  * debian/xpra.install: Install icons & desktop launcher. (Closes: #674824)
+  * Added xpra_launcher.diff patch to correct the name of executable to run by
+    the desktop launcher.
+  * Added debian/xpra.links: Add a link to xpra icon.
+
+ -- أحمد المحمودي (Ahmed El-Mahmoudy) <aelmahmoudy@sabily.org>  Sun, 03 Jun 2012 17:54:30 +0200
+
+xpra (0.3.1+dfsg-1) unstable; urgency=low
+
+  * New upstream release.
+
+ -- أحمد المحمودي (Ahmed El-Mahmoudy) <aelmahmoudy@sabily.org>  Wed, 30 May 2012 13:43:41 +0200
+
+xpra (0.3.0+dfsg-1) unstable; urgency=low
+
+  * New upstream release.
+  * Removed implicit-declaration.diff patch, it got included upstream.
+
+ -- أحمد المحمودي (Ahmed El-Mahmoudy) <aelmahmoudy@sabily.org>  Wed, 23 May 2012 11:47:51 +0200
+
+xpra (0.2.0+dfsg-2) unstable; urgency=low
+
+  [ أحمد المحمودي (Ahmed El-Mahmoudy) ]
+  * debian/control: Add versioned build-dep on cython (Closes: #670061)
+  * debian/clean: Updated files to be cleaned up (Closes: #671434)
+  * Added implicit-declaration.diff patch to explicitly declare
+    change_encoding_speed function in xpra/x264/x264lib.h
+
+  [ Piotr Ożarowski ]
+  * DM-Upload-Allowed set to yes
+
+ -- أحمد المحمودي (Ahmed El-Mahmoudy) <aelmahmoudy@sabily.org>  Sat, 12 May 2012 11:33:32 +0200
+
+xpra (0.2.0+dfsg-1) unstable; urgency=low
+
+  * New upstream release.
+  * Added libavcodec-dev, libswscale-dev, libvpx-dev, libx11-dev, libx264-dev
+    to Build-Deps
+
+ -- أحمد المحمودي (Ahmed El-Mahmoudy) <aelmahmoudy@sabily.org>  Fri, 27 Apr 2012 09:56:01 +0200
+
+xpra (0.1.0.1+dfsg-1) unstable; urgency=low
+
+  * New upstream release.
+  * debian/rules: Remove overrides for dh_auto_clean and dh_clean
+  * debian/clean: added xpra/build_info.py
+  * debian/control: Bumped Standards-Version to 3.9.3
+  * Bumped compat level to 9.
+
+ -- أحمد المحمودي (Ahmed El-Mahmoudy) <aelmahmoudy@sabily.org>  Sat, 24 Mar 2012 09:12:51 +0200
+
+xpra (0.0.7.36+dfsg-1) unstable; urgency=low
+
+  * New upstream release.
+
+ -- أحمد المحمودي (Ahmed El-Mahmoudy) <aelmahmoudy@sabily.org>  Fri, 10 Feb 2012 18:30:56 +0200
+
+xpra (0.0.7.35+dfsg-1) unstable; urgency=low
+
+  * New upstream release.
+  * debian/control: Added python-dbus to Depends.
+  * Added debian/NEWS.Debian
+  * debian/rules: Added overrides for dh_auto_clean & dh_clean to revert
+    build changes to xpra/build_info.py
+
+ -- أحمد المحمودي (Ahmed El-Mahmoudy) <aelmahmoudy@sabily.org>  Mon, 06 Feb 2012 17:08:46 +0200
+
+xpra (0.0.7.31+dfsg-1) unstable; urgency=low
+
+  * New upstream release.
+  * Removed patches that are included upstream: typos.diff,
+    backward-compatibility.diff
+
+ -- أحمد المحمودي (Ahmed El-Mahmoudy) <aelmahmoudy@sabily.org>  Thu, 01 Dec 2011 14:11:39 +0200
+
+xpra (0.0.7.30+dfsg-1) unstable; urgency=low
+
+  * New upstream release.
+  * debian/control: Removed X-Python-Version field.
+  * Added typos.diff patch to fix a typo in xpra manpage.
+  * Added backward-compatibility.diff patch to add a fix for backward
+    compatibility with older releases of xpra.
+
+ -- أحمد المحمودي (Ahmed El-Mahmoudy) <aelmahmoudy@sabily.org>  Mon, 07 Nov 2011 19:19:21 +0200
+
+xpra (0.0.7.27+dfsg-1) unstable; urgency=low
+
+  * New upstream release.
+  * debian/watch: Removed dversionmangle
+  * Dropped manpage.diff patch: applied upstream.
+  * debian/copyright:
+    + Updated format
+    + Update copyright info
+  * Bumped compat level to 8
+  * debian/control: Updated Homepage field to new upstream
+
+ -- أحمد المحمودي (Ahmed El-Mahmoudy) <aelmahmoudy@sabily.org>  Sat, 01 Oct 2011 10:14:17 +0200
+
+xpra (0.0.7.25+dfsg-1) unstable; urgency=low
+
+  [ أحمد المحمودي (Ahmed El-Mahmoudy) ]
+  * Switched to another upstream. (Closes: #639420)
+    + Fix mapping of non-US keyboards. (Closes: #628773)
+  * Dropped patches that got applied upstream: manpage.patch, run_xauth.patch,
+    setup.diff
+  * debian/control: B-D on cython instead of python-pyrex
+  * debian/clean: Added wimpiggy/lowlevel/constants.pxi
+  * debian/rules: Added an override for dh_auto_build to run
+    make_constants_pxi.py before the normal build.
+  * debian/copyrights:
+    + Updated copyrights.
+    + Added copyrights for Debian packaging.
+  * debian/watch: Switched to new upstream URL
+  * Added manpage.diff patch to fix hyphenation in xpra manpage.
+
+  [ Miguel Landaeta ]
+  * Bump Standards-Version to 3.9.2. No changes were required.
+  * Drop parti binary package since is deemed to buggy for Debian.
+  * debian/control: Add Depends on python-imaging for xpra binary package.
+
+ -- أحمد المحمودي (Ahmed El-Mahmoudy) <aelmahmoudy@sabily.org>  Tue, 06 Sep 2011 22:16:17 +0200
+
+parti-all (0.0.6+dfsg-1) experimental; urgency=low
+
+  [ أحمد المحمودي (Ahmed El-Mahmoudy) ]
+  * Initial release to Debian (Closes: #607973)
+  * Added debian/repack script to repack upstream tarball.
+  * debian/watch:
+    + Updated URL.
+    + Added demangling for dfsg.
+    + Added call for repack script
+  * Removed stray xpra.dirs
+  * Renamed wimpiggy to python-wimpiggy
+    + debian/control:
+      - Added "Section: python" for python-wimpiggy
+      - Added Provides/Conflicts: wimpiggy
+  * Switch to 3.0 (quilt) source format.
+  * Use dh_python2 instead of python-central.
+    + Removed debian/pycompat
+    + debian/control:
+      - build-dep on python-all-dev >= 2.6.6-2
+      - Use X-Python-Version in source stanza and remove X[BS]-Python-Version
+        fields.
+  * Use debhelper without CDBS.
+    + debian/rules: build-dep on debhelper >= 7.0.50~ to support dh overrides.
+  * debian/control:
+    + Bumped Standards-Version to 3.9.1, no changes needed.
+    + Added Vcs-* fields
+    + Set PAPT as Maintainer, and myself as uploader.
+    + Better package descriptions.
+    + Added ipython to parti's Depends.
+  * Added debian/parti.1, debian/parti.manpages, debian/parti.links
+  * debian/docs: Remove NEWS
+  * debian/{xpra,parti}.install: Install xpra & parti packages as private
+    packages.
+  * Added private-pkg.diff patch to add /usr/lib/xpra to sys.path for xpra
+    script and /usr/lib/parti to sys.path for parti script.
+  * debian/copyright:
+    + Removed clauses for working-notes/specs/* files, as the specs/ folder is
+      removed in this DFSG.
+    + Added clause for parti/addons/ipython_view.py
+
+  [ Miguel Landaeta ]
+  * Add myself to Uploaders.
+  * Move clean target to debian/clean file.
+
+  [ Michael Schutte <michi@uiae.at> ]
+  * Add Suggests on openssh-{client,server} for xpra.
+  * Add a couple of patches:
+    - manpage.patch: Fix a typo in xpra manpage.
+    - run_xauth.patch: Run xauth regardless of __debug__.
+  * Install upstream changelog file.
+
+  [ Jakub Wilk ]
+  * Export LDFLAGS in debian/rules.
+
+ -- أحمد المحمودي (Ahmed El-Mahmoudy) <aelmahmoudy@sabily.org>  Fri, 25 Mar 2011 19:23:24 +0200
+
+parti-all (0.0.6-0ubuntu10) natty; urgency=low
+
+  * debian/rules: Pass the same args to the custom install, as cdbs does.
+
+ -- Matthias Klose <doko@ubuntu.com>  Sat, 04 Dec 2010 14:03:38 +0100
+
+parti-all (0.0.6-0ubuntu9) natty; urgency=low
+
+  * Rebuild to add support for python 2.7.
+
+ -- Matthias Klose <doko@ubuntu.com>  Fri, 03 Dec 2010 00:06:35 +0000
+
+parti-all (0.0.6-0ubuntu8) karmic; urgency=low
+
+  * debian/control:
+    - xpra depends on x11-xserver-utils not x11-server-utils. (LP: #397456)
+
+ -- أحمد المحمودي (Ahmed El-Mahmoudy) <aelmahmoudy@users.sourceforge.net>  Thu, 09 Jul 2009 17:36:27 +0300
+
+parti-all (0.0.6-0ubuntu7) karmic; urgency=low
+
+  * Add dependency on x11-server-utils for xpra.  Thanks Antoine Martin.
+
+ -- Evan Dandrea <evand@ubuntu.com>  Fri, 12 Jun 2009 15:12:59 +0100
+
+parti-all (0.0.6-0ubuntu6) karmic; urgency=low
+
+  * Clear generated C code on clean.
+
+ -- Evan Dandrea <evand@ubuntu.com>  Thu, 04 Jun 2009 12:29:41 +0100
+
+parti-all (0.0.6-0ubuntu5) karmic; urgency=low
+
+  * Work around Debian bug #525436.  parti.install is being processed before
+    debian/tmp/* exists.
+
+ -- Evan Dandrea <evand@ubuntu.com>  Wed, 03 Jun 2009 17:10:01 +0100
+
+parti-all (0.0.6-0ubuntu4) karmic; urgency=low
+
+  * Created better descriptions for Xpra and wimpiggy.
+  * Noted the licenses for the files in working-notes/specs in
+    debian/copyright.
+
+ -- Evan Dandrea <evand@ubuntu.com>  Tue, 02 Jun 2009 12:44:00 +0100
+
+parti-all (0.0.6-0ubuntu3) karmic; urgency=low
+
+  * Add a watch file.
+  * Upload to the Ubuntu archive (LP: #306068).
+
+ -- Evan Dandrea <evand@ubuntu.com>  Fri, 01 May 2009 12:31:11 +0100
+
+parti-all (0.0.6-0ubuntu2) jaunty; urgency=low
+
+  * Change the maintainer to Ubuntu MOTU Developers.
+
+ -- Evan Dandrea <evand@ubuntu.com>  Tue, 28 Apr 2009 13:24:19 +0100
+
+parti-all (0.0.6-0ubuntu1) jaunty; urgency=low
+
+  * Initial release.
+
+ -- Evan Dandrea <evand@ubuntu.com>  Mon, 27 Apr 2009 01:43:36 +0100

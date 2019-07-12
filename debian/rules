@@ -1,0 +1,33 @@
+#!/usr/bin/make -f
+
+# Uncomment this to turn on verbose mode.
+#export DH_VERBOSE=1
+
+export DEB_LDFLAGS_MAINT_APPEND=-Wl,--as-needed
+export DEB_BUILD_MAINT_OPTIONS=hardening=+bindnow
+BUILDOPTS= --with-verbose --with-Xdummy --without-Xdummy_wrapper --without-html5
+export PYBUILD_CONFIG_ARGS=$(BUILDOPTS)
+export PYBUILD_BUILD_ARGS=$(BUILDOPTS)
+export PYBUILD_INSTALL_ARGS=$(BUILDOPTS)
+export PYBUILD_DISABLE=test
+
+%:
+	dh $@ --with quilt,python3 --buildsystem=pybuild
+
+override_dh_installchangelogs:
+	dh_installchangelogs NEWS
+
+override_dh_auto_install:
+	dh_auto_install
+	# Post-install clean-up
+	$(RM) -v debian/xpra/usr/share/xpra/COPYING debian/xpra/usr/bin/xpra_Xdummy debian/xpra/usr/share/xpra/README
+
+override_dh_installinit:
+	dh_installinit -v --no-enable --no-start
+
+override_dh_installsystemd:
+	dh_installsystemd -v --no-enable --no-start
+
+override_dh_python3:
+	dh_python3 --shebang=/usr/bin/python3
+	dh_python3 --shebang=/usr/bin/python3 /usr/lib/cups/backend /usr/lib/xpra

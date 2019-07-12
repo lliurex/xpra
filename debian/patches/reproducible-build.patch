@@ -1,0 +1,31 @@
+Last-Update: 2018-03-11
+Forwarded: not-needed
+Bug-Debian: https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=913002
+Author: Amit Biswas <abiswas@nyu.edu>
+Description: customise BUILD_MACHINE info
+ * reduce determinism (reproducible build).
+
+ Upstream could not be built reproducibly due to the inclusion of
+ xpra/build_info.py file [1], which sets a variable BUILD_MACHINE to the
+ result of platform.uname(). The syscall is especially unreproducible in
+ containers, where it returns the instruction set of the host kernel.
+
+ [1] https://tests.reproducible-builds.org/debian/rb-pkg/unstable/i386/xpra.html
+
+--- a/add_build_info.py
++++ b/add_build_info.py
+@@ -90,10 +90,12 @@
+     return props
+ 
+ 
+ def get_machineinfo():
+-    if platform.uname()[4]:
+-        return platform.uname()[4]
++    if platform.architecture()[0] == "32bit":
++        return "i686"
++    if platform.architecture()[0] == "64bit":
++        return "x86_64"
+     return "unknown"
+ 
+ def get_cpuinfo():
+     if platform.uname()[5]:

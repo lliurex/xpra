@@ -1,0 +1,18 @@
+Last-Update: 2018-07-09
+Forwarded: not-needed
+Author: Dmitry Smirnov <onlyjob@debian.org>
+Description: service file correction(s)
+
+--- a/service/xpra.service
++++ b/service/xpra.service
+@@ -6,9 +6,9 @@
+ Requires=xpra.socket
+ 
+ [Service]
+ Type=simple
+-EnvironmentFile=-/etc/sysconfig/xpra
++EnvironmentFile=-/etc/default/%p
+ ExecStart=/usr/bin/xpra proxy :14500 --daemon=no \
+     --tcp-auth=${TCP_AUTH} \
+     --ssl-cert=/etc/xpra/ssl-cert.pem --ssl=on \
+     --bind=none --auth=${AUTH} --socket-dirs=/run/xpra --socket-permissions=666 \

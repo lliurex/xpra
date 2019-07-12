@@ -1,0 +1,34 @@
+Last-Update: 2018-07-19
+Forwarded: yes
+Author: Dmitry Smirnov <onlyjob@member.fsf.org>
+Description: add more quality levels to menu; show quality percentage.
+
+--- a/xpra/client/gtk_base/gtk_tray_menu_base.py
++++ b/xpra/client/gtk_base/gtk_tray_menu_base.py
+@@ -61,18 +61,21 @@
+ BANDWIDTH_MENU_OPTIONS = get_bandwidth_menu_options()
+ 
+ LOSSLESS = "Lossless"
+ QUALITY_OPTIONS_COMMON = {
+-                50      : "Average",
+-                30      : "Low",
++                70      : "70% (Better)",
++                50      : "50% (Average)",
++                30      : "30% (Low)",
++                20      : "20% (Lower)",
++                10      : "10% (Very Low)",
+                 }
+ MIN_QUALITY_OPTIONS = QUALITY_OPTIONS_COMMON.copy()
+ MIN_QUALITY_OPTIONS[0] = "None"
+-MIN_QUALITY_OPTIONS[75] = "High"
++MIN_QUALITY_OPTIONS[75] = "75% (High)"
+ QUALITY_OPTIONS = QUALITY_OPTIONS_COMMON.copy()
+ QUALITY_OPTIONS[0]  = "Auto"
+-QUALITY_OPTIONS[1]  = "Lowest"
+-QUALITY_OPTIONS[90]  = "Best"
++QUALITY_OPTIONS[1]  = "1% (Lowest)"
++QUALITY_OPTIONS[90]  = "90% (Best)"
+ QUALITY_OPTIONS[100]  = LOSSLESS
+ 
+ 
+ SPEED_OPTIONS_COMMON = {
