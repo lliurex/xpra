@@ -62,19 +62,16 @@ BANDWIDTH_MENU_OPTIONS = get_bandwidth_menu_options()
 
 LOSSLESS = "Lossless"
 QUALITY_OPTIONS_COMMON = {
-                70      : "70% (Better)",
-                50      : "50% (Average)",
-                30      : "30% (Low)",
-                20      : "20% (Lower)",
-                10      : "10% (Very Low)",
+                50      : "Average",
+                30      : "Low",
                 }
 MIN_QUALITY_OPTIONS = QUALITY_OPTIONS_COMMON.copy()
 MIN_QUALITY_OPTIONS[0] = "None"
-MIN_QUALITY_OPTIONS[75] = "75% (High)"
+MIN_QUALITY_OPTIONS[75] = "High"
 QUALITY_OPTIONS = QUALITY_OPTIONS_COMMON.copy()
 QUALITY_OPTIONS[0]  = "Auto"
-QUALITY_OPTIONS[1]  = "1% (Lowest)"
-QUALITY_OPTIONS[90]  = "90% (Best)"
+QUALITY_OPTIONS[1]  = "Lowest"
+QUALITY_OPTIONS[90]  = "Best"
 QUALITY_OPTIONS[100]  = LOSSLESS
 
 
