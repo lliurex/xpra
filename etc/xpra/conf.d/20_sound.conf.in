@@ -2,9 +2,9 @@
 # Sound
 
 # Forward sound output to clients:
-speaker = off
+#speaker = off
 #speaker = disabled
-#speaker = on
+speaker = on
 
 # Forward sound input to server:
 # microphone = disabled

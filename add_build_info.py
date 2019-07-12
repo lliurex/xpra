@@ -91,10 +91,8 @@ def get_properties(filename):
 
 
 def get_machineinfo():
-    if platform.architecture()[0] == "32bit":
-        return "i686"
-    if platform.architecture()[0] == "64bit":
-        return "x86_64"
+    if platform.uname()[4]:
+        return platform.uname()[4]
     return "unknown"
 
 def get_cpuinfo():
@@ -213,7 +211,7 @@ def get_platform_name():
         from xpra.os_util import get_linux_distribution
         ld = get_linux_distribution()
         if ld:
-            return "%s" % (" ".join(ld))
+            return "Linux %s" % (" ".join(ld))
     except:
         pass
     return sys.platform
@@ -234,13 +232,16 @@ def record_build_info(is_build=True):
             build_time = datetime.datetime.now()
             build_date = datetime.date.today()
             #also record username and hostname:
-            set_prop(props, "BUILT_BY", "Debian")
-            set_prop(props, "BUILT_ON", "Debian")
-        set_prop(props, "DEBIAN_PACKAGE", subprocess.Popen("dpkg-parsechangelog -SVersion", stdin=None, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, shell=True).stdout.read()[:-1])
-        set_prop(props, "BUILD_DATE", subprocess.Popen("date -u --date=\"$(dpkg-parsechangelog -SDate)\" +%F", stdin=None, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, shell=True).stdout.read()[:-1])
-        set_prop(props, "BUILD_TIME", subprocess.Popen("date -u --date=\"$(dpkg-parsechangelog -SDate)\" +%R", stdin=None, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, shell=True).stdout.read()[:-1])
+            try:
+                import getpass
+                set_prop(props, "BUILT_BY", getpass.getuser())
+            except:
+                set_prop(props, "BUILT_BY", os.environ.get("USER"))
+            set_prop(props, "BUILT_ON", socket.gethostname())
+        set_prop(props, "BUILD_DATE", build_date.isoformat())
+        set_prop(props, "BUILD_TIME", build_time.strftime("%H:%M"))
         set_prop(props, "BUILD_MACHINE", get_machineinfo())
-        set_prop(props, "BUILD_CPU", "Generic CPU")
+        set_prop(props, "BUILD_CPU", get_cpuinfo())
         set_prop(props, "BUILD_BIT", platform.architecture()[0])
         set_prop(props, "BUILD_OS", get_platform_name())
         try:
@@ -289,7 +290,7 @@ def get_svn_props():
                 "LOCAL_MODIFICATIONS" : "unknown"
             }
     #find revision:
-    proc = subprocess.Popen("cat svn-version", stdin=None, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+    proc = subprocess.Popen("svnversion -n ..", stdin=None, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
     (out, _) = proc.communicate()
     if proc.returncode!=0:
         print("'svnversion -n' failed with return code %s" % proc.returncode)
@@ -316,7 +317,7 @@ def get_svn_props():
     props["REVISION"] = rev
     #find number of local files modified:
     changes = 0
-    proc = subprocess.Popen("echo 0", stdin=None, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+    proc = subprocess.Popen("svn status", stdin=None, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
     (out, _) = proc.communicate()
     if proc.poll()!=0:
         print("could not get status of local files")
