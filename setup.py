@@ -841,6 +841,8 @@ def detect_xorg_setup(install_dir=None):
 def build_xpra_conf(install_dir):
     #generates an actual config file from the template
     xvfb_command = detect_xorg_setup(install_dir)
+    assert xvfb_command[0] == 'Xorg'
+    xvfb_command[0] = '/usr/lib/xorg/Xorg'
     from xpra.platform.features import DEFAULT_ENV
     def bstr(b):
         if b is None:
@@ -1557,7 +1559,7 @@ else:
         add_data_files("share/applications",  glob.glob("xdg/*.desktop"))
         add_data_files("share/mime/packages", ["xdg/application-x-xpraconfig.xml"])
         add_data_files("share/icons",         ["xdg/xpra.png", "xdg/xpra-mdns.png", "xdg/xpra-shadow.png"])
-        add_data_files("share/appdata",       ["xdg/xpra.appdata.xml"])
+        add_data_files("share/metainfo",      ["xdg/xpra.appdata.xml"])
 
     #here, we override build and install so we can
     #generate our /etc/xpra/xpra.conf
