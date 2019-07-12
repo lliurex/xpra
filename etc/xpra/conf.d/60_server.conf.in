@@ -30,7 +30,7 @@ start-via-proxy = no
 #
 # Xsession can take care of initializing dbus, keyring-daemon,
 # gpg-agent or whatever else might be usually started together with X
-#start = /etc/X11/Xsession true
+start = /etc/X11/Xsession true
 # Or you can specify individual actions:
 #xrdb -merge /etc/X11/Xresources
 #xrdb -merge ~/.Xresources
