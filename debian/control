@@ -122,8 +122,3 @@ Description: tool to detach/reattach running X programs
  Unlike VNC, these applications are "rootless".  They appear as individual
  windows inside your window manager rather than being contained within a single
  window.
-
-Package: xpra-www-data
-Architecture: any
-Depends: ${misc:Depends}
-Description: Folder for www xpra
