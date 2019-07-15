@@ -16,7 +16,7 @@
 #include <sys/time.h>
 #include <stdio.h>
 
-#ifdef __APPLE__
+#ifdef __MACH__
 #include <mach/clock.h>
 #include <mach/mach.h>
 #endif
@@ -28,7 +28,7 @@ double get_monotonic_time(void){
 	ULONGLONG ticks = GetTickCount64();
 	return ((double) ticks) / 1000;
 #else
-#ifdef __APPLE__
+#ifdef __MACH__
 	clock_serv_t cclock;
 	mach_timespec_t mts;
 	host_get_clock_service(mach_host_self(), SYSTEM_CLOCK, &cclock);
