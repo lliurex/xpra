@@ -10,10 +10,11 @@ Bug-Debian: https://bugs.debian.org/863891
 Forwarded: not-needed
 Last-Update: 2017-06-14
 
---- a/setup.py
-+++ b/setup.py
-@@ -840,8 +840,10 @@
- 
+Index: xpra/setup.py
+===================================================================
+--- xpra.orig/setup.py
++++ xpra/setup.py
+@@ -841,6 +841,8 @@ def detect_xorg_setup(install_dir=None):
  def build_xpra_conf(install_dir):
      #generates an actual config file from the template
      xvfb_command = detect_xorg_setup(install_dir)
@@ -22,4 +23,3 @@ Last-Update: 2017-06-14
      from xpra.platform.features import DEFAULT_ENV
      def bstr(b):
          if b is None:
-             return "auto"

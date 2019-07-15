@@ -44,7 +44,7 @@ Depends: ${misc:Depends}, ${python3:Depends}, ${shlibs:Depends}
     ,xserver-xorg-video-dummy
 # Packet Encoding (http://xpra.org/trac/wiki/PacketEncoding):
     ,python3-rencode
-# package with www folder
+# Folder for www client
     ,xpra-www-data
 Recommends: ${misc:Recommends}
     ,keyboard-configuration
@@ -126,4 +126,4 @@ Description: tool to detach/reattach running X programs
 Package: xpra-www-data
 Architecture: any
 Depends: ${misc:Depends}
-Description: www folder for xpra-html5
+Description: Folder for www xpra
