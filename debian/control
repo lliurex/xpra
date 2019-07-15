@@ -28,6 +28,7 @@ Build-Depends: debhelper (>= 12~) ,pkg-config ,dh-python
     ,python3-all-dev
     ,python3-cairo-dev
     ,python-gi-dev
+	,quilt
 Homepage: http://xpra.org/
 Vcs-Git: https://salsa.debian.org/debian/xpra.git
 Vcs-Browser: https://salsa.debian.org/debian/xpra
