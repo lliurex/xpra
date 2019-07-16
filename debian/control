@@ -47,6 +47,7 @@ Depends: ${misc:Depends}, ${python3:Depends}, ${shlibs:Depends}
     ,python3-rencode
 # Folder for www client
     ,xpra-www-data
+	,python3-uinput
 Recommends: ${misc:Recommends}
     ,keyboard-configuration
     ,gir1.2-appindicator3-0.1
