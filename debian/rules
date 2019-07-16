@@ -12,7 +12,7 @@ export PYBUILD_INSTALL_ARGS=$(BUILDOPTS)
 export PYBUILD_DISABLE=test
 
 %:
-	dh $@ --with quilt,python3 --buildsystem=pybuild
+	dh $@ --with quilt,python --buildsystem=pybuild
 
 override_dh_installchangelogs:
 	dh_installchangelogs NEWS
