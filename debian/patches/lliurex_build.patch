@@ -1,0 +1,35 @@
+Index: build/xpra/os_util.py
+===================================================================
+--- build.orig/xpra/os_util.py
++++ build/xpra/os_util.py
+@@ -268,6 +268,8 @@ def is_distribution_variant(variant=b"De
+         return False
+     try:
+         v = load_os_release_file()
++        if variant==b("Ubuntu"):
++            variant="KDE neon"
+         return any(l.find(variant)>=0 for l in v.splitlines() if l.startswith(b"NAME="))
+     except:
+         pass
+@@ -312,7 +314,7 @@ def is_RedHat():
+     return is_distribution_variant(b"RedHat")
+ 
+ 
+-_linux_distribution = None
++_linux_distribution = ("ubuntu","18.04","bionic")
+ def get_linux_distribution():
+     global _linux_distribution
+     if LINUX and not _linux_distribution:
+Index: build/xpra/server/source/client_connection.py
+===================================================================
+--- build.orig/xpra/server/source/client_connection.py
++++ build/xpra/server/source/client_connection.py
+@@ -113,6 +113,8 @@ class ClientConnection(ClientConnectionC
+                  ):
+         global counter
+         self.counter = counter.increase()
++        self.dbus_control=False
++        self.idle_timeout=60
+         self.protocol = protocol
+         self.connection_time = monotonic_time()
+         self.close_event = Event()
