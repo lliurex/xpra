@@ -1,6 +1,0 @@
-xpra (0.0.7.32+dfsg-1) unstable; urgency=low
-
-  * Backward compatibility for versions older than 0.0.7.32 is broken.
-
- -- أحمد المحمودي (Ahmed El-Mahmoudy) <aelmahmoudy@sabily.org>  Mon, 06 Feb 2012 11:36:03 +0200
-

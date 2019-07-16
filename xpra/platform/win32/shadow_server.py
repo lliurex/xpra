@@ -364,7 +364,7 @@ class ShadowServer(GTKShadowServerBase):
         #non-blocking server sockets (TCP and named pipes):
         from xpra.net.bytestreams import CONTINUE_ERRNO
         import errno
-        CONTINUE_ERRNO[errno.WSAEWOULDBLOCK] = "WSAEWOULDBLOCK"     #@UndefinedVariable
+        CONTINUE_ERRNO[errno.WSAEWOULDBLOCK] = "WSAEWOULDBLOCK"     #@UndefinedVariable pylint: disable=no-member
 
     def init(self, opts):
         self.pixel_depth = int(opts.pixel_depth) or 32
@@ -514,7 +514,7 @@ class ShadowServer(GTKShadowServerBase):
         self._update_modifiers(proto, wid, modifiers)
         pointer = self._process_mouse_common(proto, wid, pointer)
         if pointer:
-            self._server_sources.get(proto).user_event()
+            self.get_server_source(proto).user_event()
             self.button_action(pointer, button, pressed, -1, *args)
 
     def button_action(self, pointer, button, pressed, deviceid=-1, *args):

@@ -1,0 +1,2 @@
+LOCAL_MODIFICATIONS='unknown'
+REVISION='unknown'

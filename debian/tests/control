@@ -1,8 +1,0 @@
-Tests: server
-Restrictions: allow-stderr
-#, isolation-container
-# ,isolation-machine
-# ,needs-recommends
-Depends: @ ,coreutils ,procps ,x11-apps ,x11-xserver-utils ,xauth
-# ,@builddeps@
-# ,x11-common

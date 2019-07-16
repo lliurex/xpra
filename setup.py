@@ -25,7 +25,7 @@ import xpra
 from xpra.os_util import (
     get_status_output, getUbuntuVersion,
     PYTHON3, BITS, WIN32, OSX, LINUX, POSIX, NETBSD, FREEBSD, OPENBSD,
-    is_Ubuntu, is_Debian, is_Raspbian, is_Fedora, is_CentOS,
+    is_Ubuntu, is_Debian, is_Raspbian, is_Fedora, is_CentOS, is_RedHat,
     )
 
 if sys.version<'2.7':
@@ -210,7 +210,7 @@ example_ENABLED         = DEFAULT
 #Cython / gcc / packaging build options:
 annotate_ENABLED        = DEFAULT
 warn_ENABLED            = True
-strict_ENABLED          = True
+strict_ENABLED          = False
 PIC_ENABLED             = not WIN32     #ming32 moans that it is always enabled already
 debug_ENABLED           = False
 verbose_ENABLED         = False
@@ -655,7 +655,7 @@ def exec_pkgconfig(*pkgs_options, **ekw):
 
     #for distros that don't patch distutils,
     #we have to add the python cflags:
-    if not (is_Fedora() or is_Debian() or is_CentOS()):
+    if not (is_Fedora() or is_Debian() or is_CentOS() or is_RedHat()):
         import shlex
         import sysconfig
         for cflag in shlex.split(sysconfig.get_config_var('CFLAGS') or ''):
@@ -841,6 +841,10 @@ def detect_xorg_setup(install_dir=None):
 def build_xpra_conf(install_dir):
     #generates an actual config file from the template
     xvfb_command = detect_xorg_setup(install_dir)
+    fake_xinerama = "no"
+    if POSIX and not OSX:
+        from xpra.x11.fakeXinerama import find_libfakeXinerama
+        fake_xinerama = find_libfakeXinerama() or "auto"
     from xpra.platform.features import DEFAULT_ENV
     def bstr(b):
         if b is None:
@@ -888,6 +892,7 @@ def build_xpra_conf(install_dir):
     mdns = mdns_ENABLED and (OSX or WIN32 or (not is_RH() and dbus_ENABLED))
     SUBS = {
             'xvfb_command'          : pretty_cmd(xvfb_command),
+            'fake_xinerama'         : fake_xinerama,
             'ssh_command'           : "auto",
             'key_shortcuts'         : "".join(("key-shortcut = %s\n" % x) for x in get_default_key_shortcuts()),
             'remote_logging'        : "both",
@@ -1396,6 +1401,7 @@ if WIN32:
             add_console_exe("xpra/scripts/config.py",           "gears.ico",        "Config_info")
         if server_ENABLED:
             add_console_exe("xpra/server/auth/sqlite_auth.py",  "sqlite.ico",        "SQLite_auth_tool")
+            add_console_exe("xpra/server/auth/sql_auth.py",     "sql.ico",           "SQL_auth_tool")
             add_console_exe("xpra/server/auth/win32_auth.py",   "authentication.ico", "System-Auth-Test")
             add_console_exe("xpra/server/auth/ldap_auth.py",    "authentication.ico", "LDAP-Auth-Test")
             add_console_exe("xpra/server/auth/ldap3_auth.py",   "authentication.ico", "LDAP3-Auth-Test")
@@ -1539,7 +1545,7 @@ else:
         if scripts_ENABLED:
             scripts += ["scripts/xpra_udev_product_version", "scripts/xpra_signal_listener"]
         libexec_scripts = []
-        if is_Fedora() or is_CentOS():
+        if is_Fedora() or is_CentOS() or is_RedHat():
             libexec = "libexec"
         else:
             libexec = "lib"
@@ -1982,7 +1988,8 @@ if crypto_ENABLED and (OSX or WIN32):
 
 #special case for client: cannot use toggle_packages which would include gtk3, etc:
 if client_ENABLED:
-    add_modules("xpra.client", "xpra.client.mixins")
+    add_modules("xpra.client")
+    add_packages("xpra.client.mixins", "xpra.client.auth")
     add_modules("xpra.scripts.gtk_info")
     add_modules("xpra.scripts.show_webcam")
 if gtk2_ENABLED or gtk3_ENABLED:
@@ -2271,11 +2278,11 @@ if pillow_ENABLED:
 toggle_packages(webp_ENABLED, "xpra.codecs.webp")
 if webp_ENABLED:
     webp_pkgconfig = pkgconfig("libwebp")
-    cython_add(Extension("xpra.codecs.webp.encode",
-                    ["xpra/codecs/webp/encode.pyx"],
+    cython_add(Extension("xpra.codecs.webp.encoder",
+                    ["xpra/codecs/webp/encoder.pyx"],
                     **webp_pkgconfig))
-    cython_add(Extension("xpra.codecs.webp.decode",
-                ["xpra/codecs/webp/decode.pyx"],
+    cython_add(Extension("xpra.codecs.webp.decoder",
+                ["xpra/codecs/webp/decoder.pyx"],
                 **webp_pkgconfig))
 
 jpeg = jpeg_decoder_ENABLED or jpeg_encoder_ENABLED

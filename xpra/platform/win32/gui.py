@@ -14,7 +14,7 @@ from ctypes import WinDLL, CFUNCTYPE, c_int, POINTER, Structure, byref, sizeof
 from ctypes.wintypes import HWND, DWORD, WPARAM, LPARAM, MSG, POINT, RECT
 
 from xpra.client import mixin_features
-from xpra.platform.win32 import constants as win32con
+from xpra.platform.win32 import constants as win32con, setup_console_event_listener
 from xpra.platform.win32.window_hooks import Win32Hooks
 from xpra.platform.win32.win32_events import KNOWN_EVENTS, POWER_EVENTS
 from xpra.platform.win32.common import (
@@ -28,7 +28,6 @@ from xpra.platform.win32.common import (
     GetDoubleClickTime,
     MonitorFromWindow, EnumDisplayMonitors,
     UnhookWindowsHookEx, CallNextHookEx, SetWindowsHookExA,
-    SetConsoleCtrlHandler,
     GetDeviceCaps,
     GetIntSystemParametersInfo,
     GetUserObjectInformationA, OpenInputDesktop, CloseDesktop,
@@ -145,6 +144,29 @@ def init_appid():
     SetCurrentProcessExplicitAppUserModelID.argtypes = [LPCWSTR]
     if shell32.SetCurrentProcessExplicitAppUserModelID(APP_ID):
         log.warn("Warning: failed to set process app ID")
+
+
+def use_stdin():
+    if os.environ.get("MSYSCON") or os.environ.get("CYGWIN"):
+        return False
+    stdin = sys.stdin
+    if not stdin or not stdin.isatty():
+        return False
+    try:
+        from xpra.platform.win32.common import GetStdHandle
+        from xpra.platform.win32 import STD_INPUT_HANDLE, not_a_console, get_console_position 
+        hstdin = GetStdHandle(STD_INPUT_HANDLE)
+        if not_a_console(hstdin):
+            return False
+        return get_console_position(hstdin)!=(-1, -1)
+    except:
+        pass
+    return True
+
+
+def get_clipboard_native_class():
+    #"xpra.clipboard.translated_clipboard.TranslatedClipboardProtocolHelper"
+    return "xpra.platform.win32.clipboard.Win32Clipboard"
 
 
 def get_native_notifier_classes():
@@ -944,7 +966,7 @@ class ClientExtras(object):
                 return True
             self._screensaver_timer = client.timeout_add(SCREENSAVER_LISTENER_POLL_DELAY*1000, log_screensaver)
         if CONSOLE_EVENT_LISTENER:
-            self._console_handler_added = self.setup_console_event_listener(True)
+            self._console_handler_added = setup_console_event_listener(self.handle_console_event, True)
         from xpra.platform.win32.win32_events import get_win32_event_listener
         try:
             el = get_win32_event_listener(True)
@@ -973,7 +995,8 @@ class ClientExtras(object):
         cha = self._console_handler_added
         if cha:
             self._console_handler_added = False
-            self.setup_console_event_listener(False)
+            #removing can cause crashes!?
+            #setup_console_event_listener(self.handle_console_event, False)
         el = self._el
         if el:
             self._el = None
@@ -1025,7 +1048,7 @@ class ClientExtras(object):
                     if keyname.startswith("Super"):
                         keycode = 0
                         #find the modifier keycode: (try the exact key we hit first)
-                        for x in [keyname, "Super_L", "Super_R"]:
+                        for x in (keyname, "Super_L", "Super_R"):
                             keycodes = modifier_keycodes.get(x, [])
                             for k in keycodes:
                                 #only interested in numeric keycodes:
@@ -1156,21 +1179,6 @@ class ClientExtras(object):
         #The system always sends a PBT_APMRESUMEAUTOMATIC message whenever the system resumes.
         elif wParam==win32con.PBT_APMRESUMEAUTOMATIC and c:
             c.resume()
-
-    def setup_console_event_listener(self, enable):
-        try:
-            log("calling SetConsoleCtrlHandler(%s)", enable)
-            handler = ctypes.WINFUNCTYPE(ctypes.c_int, ctypes.c_uint)(self.handle_console_event)
-            result = SetConsoleCtrlHandler(handler, int(enable))
-            log("SetConsoleCtrlHandler(%s, %s)=%s", handler, enable, result)
-            if result==0 and enable:
-                log.error("Error: could not set console control handler:")
-                log.error(" SetConsoleCtrlHandler: %r", ctypes.GetLastError())
-                return False
-            return True
-        except Exception as e:
-            log.error("SetConsoleCtrlHandler error: %s", e)
-            return False
 
 
     def handle_console_event(self, event):

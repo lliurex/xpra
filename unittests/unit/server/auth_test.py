@@ -43,8 +43,8 @@ class TempFileContext(object):
 
 
 class FakeOpts(object):
-    def __init__(self, d={}):
-        self._d = d
+    def __init__(self, d):
+        self._d = d or {}
     def __getattr__(self, name):
         return self._d.get(name)
 
@@ -57,11 +57,11 @@ class TestAuth(unittest.TestCase):
         assert mod, "cannot load '%s_auth' from %s" % (name, pmod)
         return mod
 
-    def _init_auth(self, mod_name, options={}, username="foo", **kwargs):
+    def _init_auth(self, mod_name, options=None, username="foo", **kwargs):
         mod = self.a(mod_name)
         return self.do_init_auth(mod, options, username, **kwargs)
 
-    def do_init_auth(self, module, options={}, username="foo", **kwargs):
+    def do_init_auth(self, module, options=None, username="foo", **kwargs):
         opts = FakeOpts(options)
         module.init(opts)
         try:
@@ -111,7 +111,7 @@ class TestAuth(unittest.TestCase):
     def test_fail(self):
         try:
             fa = self._init_auth("fail")
-        except:
+        except Exception:
             fa = None
         assert fa is None, "'fail_auth' did not fail!"
 
@@ -269,7 +269,7 @@ class TestAuth(unittest.TestCase):
         sockpath = "./socket-test"
         try:
             os.unlink(sockpath)
-        except:
+        except (OSError, IOError):
             pass
         from xpra.net.bytestreams import SocketConnection
         import socket
@@ -298,7 +298,7 @@ class TestAuth(unittest.TestCase):
         for x in to_close:
             try:
                 x.close()
-            except:
+            except (OSError, IOError):
                 pass
         assert verified
 

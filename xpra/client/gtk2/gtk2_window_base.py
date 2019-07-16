@@ -6,8 +6,8 @@
 # later version. See the file COPYING for details.
 
 from collections import namedtuple
-import gtk
-from gtk import gdk
+import gtk          #@UnresolvedImport
+from gtk import gdk #@UnresolvedImport
 
 from xpra.client.gtk_base.gtk_client_window_base import GTKClientWindowBase, HAS_X11_BINDINGS
 from xpra.gtk_common.gtk_util import WINDOW_NAME_TO_HINT, WINDOW_EVENT_MASK, BUTTON_MASK
@@ -73,17 +73,6 @@ class GTK2WindowBase(GTKClientWindowBase):
         self.set_data("_kde_no_window_grab", 1)
 
 
-    def enable_alpha(self):
-        screen = self.get_screen()
-        rgba = screen.get_rgba_colormap()
-        statelog("enable_alpha() rgba colormap=%s", rgba)
-        if rgba is None:
-            log.error("Error: cannot handle window transparency, no RGBA colormap", exc_info=True)
-            return False
-        statelog("enable_alpha() using rgba colormap %s for wid %s", rgba, self._id)
-        self.set_colormap(rgba)
-        return True
-
     def xget_u32_property(self, target, name):
         try:
             if not HAS_X11_BINDINGS:
@@ -111,9 +100,9 @@ class GTK2WindowBase(GTKClientWindowBase):
 
     ######################################################################
 
-    def queue_draw(self, x, y, width, height):
+    def queue_draw_area(self, x, y, width, height):
         window = self.get_window()
-        drawlog("queue_draw%s window=%s, window offset=%s", (x, y, width, height), window, self.window_offset)
+        drawlog("queue_draw_area%s window=%s, window offset=%s", (x, y, width, height), window, self.window_offset)
         if not window:
             log.warn("Warning: ignoring draw packet,")
             log.warn(" received for a window which is not realized yet or gone already")

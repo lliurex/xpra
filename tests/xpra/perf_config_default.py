@@ -99,7 +99,7 @@ class Config():
     PREVENT_SLEEP_COMMAND = ["xdotool", "keydown", "Shift_L", "keyup", "Shift_L"]
 
     SETTLE_TIME = 3             #how long to wait before we start measuring
-    MEASURE_TIME = 120          #run for N seconds
+    MEASURE_TIME = 120           #run for N seconds
     COLLECT_STATS_TIME = 10     #collect statistics every N seconds
     SERVER_SETTLE_TIME = 3      #how long we wait for the server to start
     DEFAULT_TEST_COMMAND_SETTLE_TIME = 1    #how long we wait after starting the test command
@@ -108,13 +108,13 @@ class Config():
     TEST_XPRA = True
     TEST_VNC = False            #WARNING: VNC not tested recently, probably needs updating
     USE_IPTABLES = False        #this requires iptables to be setup so we can use it for accounting
-    USE_VIRTUALGL = True        #allows us to run GL games and benchmarks using the GPU
+    USE_VIRTUALGL = False       #allows us to run GL games and benchmarks using the GPU
     PREVENT_SLEEP = True
 
     STARTING_TEST = 0           #the index of the first test to run
     LIMIT_TESTS = 999           #the limit of tests to be run
     MAX_ERRORS = 100            #allow this many tests to cause errors before aborting
-    XPRA_USE_PASSWORD = True
+    XPRA_USE_PASSWORD = False
 
     NO_SHAPING = (0, 0, 0)
     #TRICKLE_SHAPING_OPTIONS = [NO_SHAPING]
@@ -177,7 +177,8 @@ class Config():
 
     #XPRA_TEST_ENCODINGS = ["png", "x264", "mmap"]
     #XPRA_TEST_ENCODINGS = ["png", "jpeg", "x264", "vpx", "mmap"]
-    XPRA_TEST_ENCODINGS = ["png", "rgb", "jpeg", "h264", "vp8", "vp9", "mmap"]
+    #XPRA_TEST_ENCODINGS = ["png", "rgb", "jpeg", "h264", "vp8", "vp9", "mmap"]
+    XPRA_TEST_ENCODINGS = ["webp", "jpeg", "auto"]
 
     #XPRA_ENCODING_QUALITY_OPTIONS = {"jpeg" : XPRA_QUALITY_OPTIONS,
     #    "x264" : XPRA_QUALITY_OPTIONS+[-1]}
@@ -189,6 +190,13 @@ class Config():
     #    "vpx" : [True, False]}
     #only test default opengl setting:
     XPRA_OPENGL_OPTIONS = {}
+
+    #XPRA_CLIENT_TYPES = ["python2", "html5"]
+    XPRA_CLIENT_TYPES = ["python2", "html5"]
+    XPRA_HTML5_BROWSERS = (
+        ["firefox", "-P", "Test"],
+        ["google-chrome", "--user-data-dir=~/Downloads/TEMP"],
+        )
 
     XPRA_MDNS = False
     TEST_SOUND = False
@@ -262,6 +270,8 @@ class Config():
         print("XPRA_ENCODING_SPEED_OPTIONS: %s" % str(self.XPRA_ENCODING_SPEED_OPTIONS))
         print("XPRA_OPENGL_OPTIONS: %s" % self.XPRA_OPENGL_OPTIONS)
         print("XPRA_MDNS: %s" % self.XPRA_MDNS)
+        print("XPRA_CLIENT_TYPES: %s" % self.XPRA_CLIENT_TYPES)
+        print("XPRA_HTML5_BROWSERS: %s" % (self.XPRA_HTML5_BROWSERS,))
         print("TEST_SOUND: %s" % self.TEST_SOUND)
         print("XVNC_BIN: %s" % self.XVNC_BIN)
         print("XVNC_SERVER_START_COMMAND: %s" % self.XVNC_SERVER_START_COMMAND)

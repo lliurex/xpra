@@ -9,7 +9,6 @@
 from __future__ import absolute_import
 
 import struct
-import time
 
 from xpra.gtk_common.error import XError
 from xpra.os_util import strtobytes
@@ -18,7 +17,7 @@ from xpra.log import Logger
 log = Logger("x11", "bindings", "window")
 
 
-from libc.stdlib cimport free, malloc
+from libc.stdlib cimport free, malloc       #pylint: disable=syntax-error
 
 ###################################
 # Headers, python magic
@@ -95,6 +94,8 @@ cdef extern from "X11/Xlib.h":
 
     int XSetSelectionOwner(Display * display, Atom selection, Window owner, Time ctime)
 
+    int XConvertSelection(Display * display, Atom selection, Atom target, Atom property, Window requestor, Time time)
+
     # There are way more event types than this; add them as needed.
     ctypedef struct XAnyEvent:
         int type
@@ -127,6 +128,12 @@ cdef extern from "X11/Xlib.h":
         unsigned int state      # key or button mask
         unsigned int button
         Bool same_screen
+    ctypedef struct XSelectionEvent:
+        Window requestor
+        Atom selection
+        Atom target
+        Atom property
+        Time time
     # The only way we can learn about override redirects is through MapNotify,
     # which means we need to be able to get MapNotify for windows we have
     # never seen before, which means we can't rely on GDK:
@@ -136,6 +143,7 @@ cdef extern from "X11/Xlib.h":
         XButtonEvent xbutton
         XConfigureEvent xconfigure
         XClientMessageEvent xclient
+        XSelectionEvent xselection
 
     Status XSendEvent(Display *, Window target, Bool propagate,
                       unsigned long event_mask, XEvent * event)
@@ -296,6 +304,10 @@ cdef extern from "X11/extensions/xfixeswire.h":
     unsigned long XFixesDisplayCursorNotifyMask
     void XFixesSelectCursorInput(Display *, Window w, long mask)
 
+    unsigned int XFixesSetSelectionOwnerNotifyMask
+    unsigned int XFixesSelectionWindowDestroyNotifyMask
+    unsigned int XFixesSelectionClientCloseNotifyMask
+
 cdef extern from "X11/extensions/Xfixes.h":
     ctypedef struct XFixesCursorNotify:
         char* subtype
@@ -335,6 +347,8 @@ cdef extern from "X11/extensions/Xfixes.h":
 
     void XFixesSetWindowShapeRegion(Display *dpy, Window win, int shape_kind, int x_off, int y_off, XserverRegion region)
 
+    void XFixesSelectSelectionInput(Display *dpy, Window win, Atom selection, unsigned long eventMask)
+
 
 ###################################
 # Xdamage
@@ -356,28 +370,6 @@ cdef extern from "X11/extensions/Xdamage.h":
     Damage XDamageCreate(Display *, Drawable, int level)
     void XDamageDestroy(Display *, Damage)
     void XDamageSubtract(Display *, Damage, XserverRegion repair, XserverRegion parts)
-
-
-
-
-
-cdef _munge_packed_ints_to_longs(data):
-    assert len(data) % sizeof(int) == 0
-    cdef unsigned int n = len(data) // sizeof(int)
-    format_from = b"@" + b"i" * n
-    format_to = b"@" + b"l" * n
-    return struct.pack(format_to, *struct.unpack(format_from, data))
-
-cdef _munge_packed_longs_to_ints(data):
-    assert len(data) % sizeof(long) == 0
-    cdef unsigned int n = len(data) // sizeof(long)
-    format_from = b"@" + b"l" * n
-    format_to = b"@" + b"i" * n
-    return struct.pack(format_to, *struct.unpack(format_from, data))
-
-
-
-
 
 
 cdef long cast_to_long(i):
@@ -522,11 +514,9 @@ cdef class _X11WindowBindings(_X11CoreBindings):
         return depth
 
     # Focus management
-    def XSetInputFocus(self, Window xwindow, object time=None):
+    def XSetInputFocus(self, Window xwindow, object time=CurrentTime):
         self.context_check()
         # Always does RevertToParent
-        if time is None:
-            time = CurrentTime
         XSetInputFocus(self.display, xwindow, RevertToParent, time)
 
     def XGetInputFocus(self):
@@ -722,10 +712,8 @@ cdef class _X11WindowBindings(_X11CoreBindings):
         self.context_check()
         return XGetSelectionOwner(self.display, self.xatom(atom))
 
-    def XSetSelectionOwner(self, Window xwindow, atom, time=None):
+    def XSetSelectionOwner(self, Window xwindow, atom, time=CurrentTime):
         self.context_check()
-        if time is None:
-            time = CurrentTime
         return XSetSelectionOwner(self.display, self.xatom(atom), xwindow, time)
 
     def sendClientMessage(self, Window xtarget, Window xwindow, int propagate, int event_mask,
@@ -805,6 +793,45 @@ cdef class _X11WindowBindings(_X11CoreBindings):
         s = XSendEvent(self.display, xwindow, False, NoEventMask, &e)
         if s == 0:
             raise ValueError("failed to serialize XEmbed Message")
+
+    ###################################
+    # Clipboard
+    ###################################
+    def selectXFSelectionInput(self, Window window, selection_str):
+        cdef unsigned long event_mask = (
+            XFixesSetSelectionOwnerNotifyMask |
+            XFixesSelectionWindowDestroyNotifyMask |
+            XFixesSelectionClientCloseNotifyMask
+            )
+        cdef Atom selection = self.xatom(selection_str)
+        XFixesSelectSelectionInput(self.display, window, selection, event_mask)
+
+    def selectSelectionInput(self, Window xwindow):
+        self.context_check()
+        self.addXSelectInput(xwindow, SelectionNotify)
+
+    def sendSelectionNotify(self, Window xwindow, selection, target, property, time=CurrentTime):
+        self.context_check()
+        cdef XEvent e                       #@DuplicatedSignature
+        e.type = SelectionNotify
+        e.xselection.requestor = xwindow
+        e.xselection.selection = self.xatom(selection)
+        e.xselection.target = self.xatom(target)
+        e.xselection.property = self.xatom(property)
+        e.xselection.time = time
+        if property:
+            e.xselection.property = self.xatom(property)
+        else:
+            e.xselection.property = 0
+        cdef Status s                       #@DuplicatedSignature
+        s = XSendEvent(self.display, xwindow, True, 0, &e)
+        if s == 0:
+            raise ValueError("failed to serialize SelectionNotify")
+        self.context_check()
+
+    def ConvertSelection(self, selection, target, property, Window requestor, time=CurrentTime):
+        return XConvertSelection(self.display, self.xatom(selection), self.xatom(target),
+                                 self.xatom(property), requestor, time)
 
     def sendConfigureNotify(self, Window xwindow):
         self.context_check()
@@ -913,14 +940,11 @@ cdef class _X11WindowBindings(_X11CoreBindings):
         self.addXSelectInput(xwindow, FocusChangeMask)
 
 
-    def XGetWindowProperty(self, Window xwindow, property, req_type=0, etype=None):
+    def XGetWindowProperty(self, Window xwindow, property, req_type=None, etype=None, int buffer_size=64*1024, delete=False, incr=False):
         # NB: Accepts req_type == 0 for AnyPropertyType
         # "64k is enough for anybody"
         # (Except, I've found window icons that are strictly larger)
         self.context_check()
-        cdef int buffer_size = 64 * 1024
-        if etype=="icons":
-            buffer_size = 4 * 1024 * 1024
         cdef Atom xactual_type = <Atom> 0
         cdef int actual_format = 0
         cdef unsigned long nitems = 0, bytes_after = 0
@@ -939,7 +963,7 @@ cdef class _X11WindowBindings(_X11CoreBindings):
                                      # This argument has to be divided by 4.  Thus
                                      # speaks the spec.
                                      buffer_size // 4,
-                                     False,
+                                     delete,
                                      xreq_type, &xactual_type,
                                      &actual_format, &nitems, &bytes_after, &prop)
         if status != Success:
@@ -950,7 +974,7 @@ cdef class _X11WindowBindings(_X11CoreBindings):
             raise BadPropertyType("expected %s but got %s" % (req_type, self.XGetAtomName(xactual_type)))
         # This should only occur for bad property types:
         assert not (bytes_after and not nitems)
-        if bytes_after:
+        if bytes_after and not incr:
             raise PropertyOverflow("reserved %i bytes for %s buffer, but data is bigger by %i bytes!" % (buffer_size, etype, bytes_after))
         # actual_format is in (8, 16, 32), and is the number of bits in a logical
         # element.  However, this doesn't mean that each element is stored in that
@@ -969,13 +993,10 @@ cdef class _X11WindowBindings(_X11CoreBindings):
         cdef int nbytes = bytes_per_item * nitems
         data = (<char *> prop)[:nbytes]
         XFree(prop)
-        if actual_format == 32:
-            return _munge_packed_longs_to_ints(data)
-        else:
-            return data
+        return data
 
 
-    def GetWindowPropertyType(self, Window xwindow, property):
+    def GetWindowPropertyType(self, Window xwindow, property, incr=False):
         #as above, but for any property type
         #and returns the type found
         self.context_check()
@@ -1002,36 +1023,35 @@ cdef class _X11WindowBindings(_X11CoreBindings):
             raise BadPropertyType("None type")
         # This should only occur for bad property types:
         assert not (bytes_after and not nitems)
-        if bytes_after:
+        if bytes_after and not incr:
             raise BadPropertyType("incomplete data: %i bytes after" % bytes_after)
         assert actual_format in (8, 16, 32)
         XFree(prop)
-        return self.XGetAtomName(xactual_type)
+        return self.XGetAtomName(xactual_type), actual_format
 
 
     def XDeleteProperty(self, Window xwindow, property):
         self.context_check()
         XDeleteProperty(self.display, xwindow, self.xatom(property))
 
-    def XChangeProperty(self, Window xwindow, property, value):
+    def XChangeProperty(self, Window xwindow, property, dtype, int dformat, data):
         "Set a property on a window."
         self.context_check()
-        (type, format, data) = value
-        assert format in (8, 16, 32), "invalid format for property: %s" % format
-        assert (len(data) % (format / 8)) == 0, "size of data is not a multiple of %s" % (format/8)
-        cdef int nitems = len(data) / (format / 8)
-        if format == 32:
-            data = _munge_packed_ints_to_longs(data)
+        assert dformat in (8, 16, 32), "invalid format for property: %s" % dformat
+        cdef unsigned char nbytes = dformat//8
+        if dformat==32:
+            nbytes = sizeof(long)
+        assert len(data) % nbytes == 0, "size of data is not a multiple of %s" % nbytes
+        cdef int nitems = len(data) // nbytes
         cdef char * data_str
         data_str = data
-        #print("XChangeProperty(%#x, %s, %s) data=%s" % (xwindow, property, value, str([hex(x) for x in data_str])))
         XChangeProperty(self.display, xwindow,
-                         self.xatom(property),
-                         self.xatom(type),
-                         format,
-                         PropModeReplace,
-                         <unsigned char *>data_str,
-                         nitems)
+                        self.xatom(property),
+                        self.xatom(dtype),
+                        dformat,
+                        PropModeReplace,
+                        <unsigned char *>data_str,
+                        nitems)
 
 
     # Save set handling
