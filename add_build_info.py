@@ -5,6 +5,8 @@
 # Xpra is released under the terms of the GNU GPL v2, or, at your option, any
 # later version. See the file COPYING for details.
 
+#pylint: disable=bare-except
+
 import datetime
 import subprocess
 import socket
@@ -13,13 +15,14 @@ import os.path
 import re
 import sys
 
-def bytestostr(x):
-    return str(x)
 if sys.version > '3':
     unicode = str           #@ReservedAssignment
     def bytestostr(x):
-        if type(x)==bytes:
+        if isinstance(x, bytes):
             return x.decode("latin1")
+        return str(x)
+else:
+    def bytestostr(x):
         return str(x)
 
 
@@ -33,7 +36,7 @@ def save_properties(props, filename):
     if os.path.exists(filename):
         try:
             os.unlink(filename)
-        except:
+        except (OSError, IOError):
             print("WARNING: failed to delete %s" % filename)
     def u(v):
         try:
@@ -52,7 +55,7 @@ def save_properties(props, filename):
             s = bytestostr(value).replace("'", "\\'")
             w(name)
             w("=")
-            quote_it = type(value) not in (bool, tuple, int)
+            quote_it = not isinstance(value, (bool, tuple, int))
             if quote_it:
                 w("'")
             w(s)
@@ -70,11 +73,11 @@ def get_properties(filename):
             for line in f:
                 try:
                     s = line.decode("utf-8")
-                except:
+                except UnicodeDecodeError:
                     #str cannot be decoded!
                     s = str(line)
                 s = s.strip()
-                if len(s)==0:
+                if not s:
                     continue
                 if s[0] in ('!', '#'):
                     continue
@@ -84,6 +87,8 @@ def get_properties(filename):
                     continue
                 name = parts[0]
                 value = parts[1]
+                if not value:
+                    continue
                 if value[0]!="'" or value[-1]!="'":
                     continue
                 props[name]= value[1:-1]
@@ -135,7 +140,7 @@ def get_output_lines(commands):
 
 def get_first_line_output(commands):
     lines = get_output_lines(commands)
-    if len(lines)>0:
+    if lines:
         return lines[0]
     return  ""
 
@@ -146,7 +151,7 @@ def get_nvcc_version():
         if p=="" or os.path.exists(nvcc):
             options.append(("%s --version" % (nvcc), 0))
     lines = get_output_lines(options)
-    if len(lines)>0:
+    if lines:
         vline = lines[-1]
         vpos = vline.rfind(", V")
         if vpos>0:
@@ -154,16 +159,14 @@ def get_nvcc_version():
     return None
 
 def get_compiler_version():
-    #FIXME: we assume we'll use GCC if it is on the path...
-    test_options = [("gcc --version", 0)]
+    test_options = [("%s --version" % os.environ.get("CC", "gcc"), 0)]
     if sys.platform.startswith("win"):
         test_options.append(("cl", 0))
         test_options.append((os.path.join(os.environ.get("VCINSTALLDIR", ""), "bin", "cl"), 0))
     return get_first_line_output(test_options)
 
 def get_linker_version():
-    #FIXME: we assume we'll use GCC if it is on the path...
-    test_options = [("ld --version", 0)]
+    test_options = [("%s --version" % os.environ.get("LD", "ld"), 0)]
     if sys.platform.startswith("win"):
         test_options.append(("link", 1100))
         test_options.append((os.path.join(os.environ.get("VCINSTALLDIR", ""), "bin", "link"), 1100))
@@ -194,14 +197,13 @@ def get_platform_name():
     if sys.platform.find("openbsd")>=0:
         return "OpenBSD"
     if sys.platform.startswith("win"):
-        #TODO: use something a bit faster:
         try:
             o = subprocess.Popen('systeminfo', stdout=subprocess.PIPE).communicate()[0]
             try:
                 o = str(o, "latin-1")  # Python 3+
             except:
                 pass
-            return re.search("OS Name:\s*(.*)", o).group(1).strip()
+            return re.search(r"OS Name:\s*(.*)", o).group(1).strip()
         except:
             pass
         return "Microsoft Windows"

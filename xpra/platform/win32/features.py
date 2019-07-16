@@ -10,7 +10,6 @@ REINIT_WINDOWS = True
 
 CLIPBOARDS=["CLIPBOARD"]
 CLIPBOARD_GREEDY = True
-CLIPBOARD_NATIVE_CLASS = "xpra.clipboard.translated_clipboard.TranslatedClipboardProtocolHelper"
 
 EXECUTABLE_EXTENSION = "exe"
 

@@ -40,25 +40,6 @@ for signame in (sig for sig in dir(signal) if sig.startswith("SIG") and not sig.
     SIGNAMES[getattr(signal, signame)] = signame
 
 
-#use cStringIO, fallback to StringIO,
-#and python3 is making life more difficult yet again:
-try:
-    from io import BytesIO as BytesIOClass              #@UnusedImport
-except ImportError:
-    try:
-        from cStringIO import StringIO as BytesIOClass  #@Reimport @UnusedImport
-    except ImportError:
-        from StringIO import StringIO as BytesIOClass   #@Reimport @UnusedImport
-assert BytesIOClass
-try:
-    from StringIO import StringIO as StringIOClass      #@UnusedImport
-except ImportError:
-    try:
-        from cStringIO import StringIO as StringIOClass #@Reimport @UnusedImport
-    except ImportError:
-        from io import StringIO as StringIOClass        #@Reimport @UnusedImport
-assert StringIOClass
-
 WIN32 = sys.platform.startswith("win")
 OSX = sys.platform.startswith("darwin")
 LINUX = sys.platform.startswith("linux")
@@ -232,7 +213,7 @@ def get_machine_id():
     """
     v = u""
     if POSIX:
-        for filename in ["/etc/machine-id", "/var/lib/dbus/machine-id"]:
+        for filename in ("/etc/machine-id", "/var/lib/dbus/machine-id"):
             v = load_binary_file(filename)
             if v is not None:
                 break
@@ -279,22 +260,35 @@ def is_X11():
     return is_X11_Display()
 
 def is_Wayland():
-    return os.environ.get("WAYLAND_DISPLAY") or os.environ.get("XDG_SESSION_TYPE")=="wayland"
+    return os.environ.get("GDK_BACKEND", "")!="x11" and (os.environ.get("WAYLAND_DISPLAY") or os.environ.get("XDG_SESSION_TYPE")=="wayland")
 
 
-def is_distribution_variant(variant=b"Debian", os_file="/etc/os-release"):
+def is_distribution_variant(variant=b"Debian"):
     if not POSIX:
         return False
     try:
+        v = load_os_release_file()
+        return any(l.find(variant)>=0 for l in v.splitlines() if l.startswith(b"NAME="))
+    except:
+        pass
+    try:
+        if b"RedHat"==variant and get_linux_distribution()[0].startswith(variant):
+            return True
         if get_linux_distribution()[0]==variant:
             return True
     except:
         pass
-    try:
-        v = load_binary_file(os_file)
-        return any(l.find(variant)>=0 for l in v.splitlines() if l.startswith(b"NAME="))
-    except:
-        return False
+    return False
+
+os_release_file_data = False
+def load_os_release_file():
+    global os_release_file_data
+    if os_release_file_data is False:
+        try:
+            os_release_file_data = load_binary_file("/etc/os-release")
+        except:
+            os_release_file_data = None
+    return os_release_file_data
 
 def is_Ubuntu():
     return is_distribution_variant(b"Ubuntu")
@@ -486,9 +480,10 @@ def close_all_fds(exceptions=()):
 
 def use_tty():
     from xpra.util import envbool
-    NOTTY = envbool("XPRA_NOTTY", False)
-    stdin = sys.stdin
-    return not os.environ.get("MSYSCON") and not NOTTY and stdin and stdin.isatty()
+    if envbool("XPRA_NOTTY", False):
+        return False
+    from xpra.platform.gui import use_stdin
+    return use_stdin()
 
 
 def shellsub(s, subs=None):
@@ -676,8 +671,8 @@ def setbinarymode(fd):
         #turn on binary mode:
         try:
             import msvcrt
-            msvcrt.setmode(fd, os.O_BINARY)         #@UndefinedVariable
-        except:
+            msvcrt.setmode(fd, os.O_BINARY)         #@UndefinedVariable pylint: disable=no-member
+        except (OSError, IOError):
             get_util_logger().error("setting stdin to binary mode failed", exc_info=True)
 
 def find_lib_ldconfig(libname):
@@ -700,7 +695,7 @@ def find_lib_ldconfig(libname):
     p = subprocess.Popen([ldconfig, "-p"], stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
     data = bytestostr(p.communicate()[0])
 
-    libpath = re.search(pattern, data, re.MULTILINE)
+    libpath = re.search(pattern, data, re.MULTILINE)        #@UndefinedVariable
     if libpath:
         libpath = libpath.group(1)
     return libpath

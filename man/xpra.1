@@ -30,6 +30,7 @@ xpra \- viewer for remote, persistent X applications
 \fBxpra\fP \fBstop\fP | \fBxpra\fP \fBexit\fP | \fBxpra\fP \fBdetach\fP |
 \fBxpra\fP \fBscreenshot\fP \fIfilename\fP | \fBxpra\fP \fBversion\fP |
 \fBxpra\fP \fBinfo\fP [CONNECTIONSTRING]
+\fBxpra\fP \fBtop\fP [CONNECTIONSTRING]
 [\fBOPTIONS..\fP]
 .HP
 \fBxpra\fP \fBcontrol\fP [CONNECTIONSTRING] \fIcommand\fP [\fIarguments..\fP]
@@ -43,6 +44,8 @@ xpra \- viewer for remote, persistent X applications
 \fBxpra\fP \fBlist\fP [\fB--socket-dir\fP=\fIDIR\fP]
 .HP
 \fBxpra\fP \fBshowconfig\fP [\fBOPTIONS..\fP]
+.HP
+\fBxpra\fP \fBshowsetting\fP [\fBSETTING1..\fP]
 .HP
 \fBxpra\fP \fBlist-mdns\fP
 .HP
@@ -146,6 +149,10 @@ Show a list of xpra servers found via mDNS. (local network)
 \fBxpra showconfig\fP
 Shows the configuration that would be used with other sub-commands,
 taking into account the command line arguments.
+.TP
+\fBxpra\fP \fBshowsetting\fP [\fBSETTING1..\fP]
+Shows the value of a specific configuration setting and which
+configuration directory set this value.
 .TP
 \fBxpra attach\fP \fI:7\fP
 Attach to the xpra server that is using local display number \fI:7\fP.
@@ -256,7 +263,8 @@ Queries the server version and prints it out.
 Note: older servers may not support this feature.
 .SS xpra info
 Queries the server for version, status and statistics.
-Note: older servers may not support this feature.
+.SS xpra top
+Shows the server's key health attributes.
 .SS xpra control
 Modify the server at runtime by issuing commands.
 The list of commands can be obtained by specifying "help" as command.
@@ -537,6 +545,22 @@ i.e. 'daemonizes', and redirects its output to a log file.
 This can be used to prevent that behavior (useful mostly for debugging).
 .TP
 
+\fB--resize-display\fP=\fIyes\fP|\fIno\fP
+Resize the virtual display to match the resolution of
+the client currently connected.
+This only applies to the \fIstart\fP and \fIstart-desktop\fP
+subcommands.
+.TP
+
+\fB--fake-xinerama\fP=\fIPATH\fP|\fIauto\fP|\fIno\fP
+Specify the path to the \fBlibfakeXinerama.so\fP library which
+will be injected into all the child processes the server starts
+using \fILD_PRELOAD\fP.
+This can also be disabled or set to \fIauto\fP: the server
+will then try to locate the library itself.
+This only applies to the \fIstart\fP subcommand.
+.TP
+
 \fB--chdir\fP=\fIDIR\fP
 Change to this directory after daemonizing.
 .TP
@@ -656,6 +680,8 @@ ie: \fB--auth=file:filename=./password.txt\fP.
 
 The contents of this file will be treated as binary data,
 there are no restrictions on character encodings or file size.
+Beware of trailing newline characters which will be included in the
+password data.
 
 .IP \fBmultifile\fP
 checks the username and password against the file specified using
@@ -667,15 +693,20 @@ The file must contain each user credentials on one line of the form:
 It is not possible to have usernames or password that contain
 the pipe character \fI|\fP which is used as delimiter, or newlines
 and carriage returns.
+This module is deprecated, \fIsqlite\fP should be used instead.
 
 .IP \fBsqlite\fP
+.IP \fBmysql\fP
+.IP \fBsql\fP
 checks the username and password against the sqlite database file
-specified using the filename option.
+specified using the \fIfilename\fP option (for the \fIsqlite\fP backend),
+or the database specified using the \fIuri\fP option
+(\fImysql\fP and \fIsql\fP backends).
 The authentication will be processed using the following query
-(which is configurable using the "password_query" option):
+(which is configurable using the \fIpassword_query\fP option):
 \fISELECT password FROM users WHERE username=(?)\fP
-The sessions available for each user will be querying using:
-(this is configurable using the "sessions_query" option):
+The sessions available for each user will be queried using:
+(this is configurable using the \fIsessions_query\fP option):
 \fISELECT uid, gid, displays, env_options, session_options
 FROM users WHERE username=(?)\fP
 Multiple displays may be specified as a comma separated list.
@@ -769,27 +800,30 @@ Authentication module to use for the \fBbind-rfb\fP sockets.
 Just like the \fBauth\fP switch, except this one only applies
 to VSOCK sockets (sockets defined using the \fBbind-vsock\fP switch).
 .TP
-\fB--challenge-handlers\fP=\fIMODULES\fP
+\fB--challenge-handlers\fP=\fIMODULE:options\fP
 Configures which challenge handlers are used by the client and in
-which order.
+which order. This option may be repeated to specify multiple handlers,
+which can be useful if the server sends more than one authentication
+challenge.
 The default value is: \fIall\fP which corresponds to:
 \fIuri,file,env,kerberos,gss,u2f,prompt\fP.
-Note: some of these modules will fall through to others if they are
-enable to supply the challenge requested (\fIuri\fP, \fIfile\fP,
-\fIkerberos\fP and \fIgss\fP), others do not (\fIenv\fP and \fIprompt\fP).
 .RS
 .IP \fBuri\fP
 Use the password specified on the connection string, if any.
 .IP \fBfile\fP
-Loads the password from the file specified with the
-\fPpassword-file switch.
+The filename used to store the password can be specified using the
+\fIfilename\fP option.
+If this option is not specified, it will fallback to using the
+password filename specified with the \fIpassword-file\fP switch
+or if that is also unset, \fIpassword.txt\fP will be used.
 .IP \fBenv\fP
-Use the password specified using the \fIXPRA_PASSWORD\fP
-environment variable.
+Use the password specified using the environment variable
+specified using the \fIname\fP option, which defaults to
+\fIXPRA_PASSWORD\fP if unspecified.
 .IP \fBkerberos\fP
-Request a kerberos token for the service specified.
+Requests a kerberos token for the service specified.
 .IP \fBgss\fP
-Request a gss token for the service specified.
+Requests a gss token for the service specified.
 .IP \fBu2f\fP
 Requests a token from a U2F device.
 .IP \fBprompt\fP
@@ -1117,6 +1151,13 @@ heuristics or specified using the dbus interface.
 
 .SS Options for attach
 .TP
+\fB--modal-windows\fP=\fIyes\fP|\fIno\fP
+Honour modal windows.
+This may have undesirable side effects when multiple applications are
+forwarded through the same xpra server: modal windows will be made modal
+for all the applications forwarded by xpra rather than just the one
+application which owns that window.
+.TP
 \fB--password-file\fP=\fIFILENAME\fP
 Supply the password to be used for connecting to a server that
 uses authentication. See \fIauth\fP, \fItcp-auth\fP, \fIssl-auth\fP
@@ -1184,7 +1225,7 @@ This option is enabled by default with a delay of 0.25 seconds.
 This option is only relevant when using a lossy encoding.
 .TP
 \fB--shortcut-modifiers\fP=\fIMODIFIERS\fP
-Defines the default shorcut modifers required by the \fIkey-shortcuts\fP,
+Defines the default shortcut modifiers required by the \fIkey-shortcuts\fP,
 these modifiers can then be referred to as \fI#\fP.
 The default value is 'auto' which evaluates to \fIMeta+Shift\fP on most
 platforms.
@@ -1352,7 +1393,12 @@ The following placeholders are defined:
 .IP \fB\@title\@\fP
 Will be replaced by the remote window's title.
 .IP \fB\@client-machine\@\fP
-Will be replaced by the remote server's hostname.
+Will be replaced by the hostname of the system where the application is running,
+if provided, the xpra server's hostname otherwise.
+.IP \fB\@server-machine\@\fP
+Will be replaced by the hostname of the xpra server.
+.IP \fB\@server-display\@\fP
+Will be replaced by the name of the display on which the application is running.
 .RE
 .PP
 

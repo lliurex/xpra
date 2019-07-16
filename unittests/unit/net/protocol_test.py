@@ -64,8 +64,8 @@ def make_profiling_protocol_class(protocol_class):
 
     class ProfileProtocol(protocol_class):
         def profiling_context(self, basename):
-            from pycallgraph import PyCallGraph, Config
-            from pycallgraph.output import GraphvizOutput
+            from pycallgraph import PyCallGraph, Config     #@UnresolvedImport
+            from pycallgraph.output import GraphvizOutput   #@UnresolvedImport
             config = Config()
             graphviz = GraphvizOutput(output_file='%s-%i.png' % (basename, monotonic_time()))
             return PyCallGraph(output=graphviz, config=config)
@@ -104,7 +104,7 @@ class ProtocolTest(unittest.TestCase):
         errs = []
         protocol = self.make_memory_protocol(data)
         def check_failed():
-            if not protocol._closed:
+            if not protocol.is_closed():
                 errs.append("protocol not closed")
             if protocol.input_packetcount>0:
                 errs.append("processed %i packets" % protocol.input_packetcount)
@@ -224,7 +224,7 @@ class ProtocolTest(unittest.TestCase):
         start = monotonic_time()
         loop.run()
         end = monotonic_time()
-        assert protocol._closed
+        assert protocol.is_closed()
         log("protocol: %s", protocol)
         log("%s write-data=%s", conn, len(conn.write_data))
         total_size = sum(len(packet) for packet in conn.write_data)

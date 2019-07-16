@@ -5,6 +5,7 @@
 # later version. See the file COPYING for details.
 
 # Platform-specific code for Win32.
+#pylint: disable=bare-except
 
 import errno
 import os.path
@@ -17,12 +18,13 @@ from xpra.util import envbool
 from xpra.os_util import PYTHON2, PYTHON3
 from xpra.platform.win32 import constants as win32con
 from xpra.platform.win32.common import (
+    GetStdHandle,
     SetConsoleTitleA, GetConsoleScreenBufferInfo,
     MessageBoxA, GetLastError, kernel32,
     )
 
 
-GetStdHandle = WINFUNCTYPE(HANDLE, DWORD)(("GetStdHandle", kernel32))
+STD_INPUT_HANDLE = DWORD(-10)
 STD_OUTPUT_HANDLE = DWORD(-11)
 STD_ERROR_HANDLE = DWORD(-12)
 GetFileType = WINFUNCTYPE(DWORD, DWORD)(("GetFileType", kernel32))
@@ -87,12 +89,17 @@ def set_prgname(name):
     except:
         pass
 
+def not_a_console(handle):
+    if handle == INVALID_HANDLE_VALUE or handle is None:
+        return True
+    return ((GetFileType(handle) & ~FILE_TYPE_REMOTE) != FILE_TYPE_CHAR
+            or GetConsoleMode(handle, byref(DWORD())) == 0)
 
 def fix_unicode_out():
     if PYTHON3:
         _unicode = str
     else:
-        _unicode = unicode
+        _unicode = unicode  #@UndefinedVariable
     #code found here:
     #http://stackoverflow.com/a/3259271/428751
     import codecs
@@ -125,12 +132,6 @@ def fix_unicode_out():
         #
         # <http://msdn.microsoft.com/en-us/library/ms683167(VS.85).aspx>
         # BOOL WINAPI GetConsoleMode(HANDLE hConsole, LPDWORD lpMode);
-
-        def not_a_console(handle):
-            if handle == INVALID_HANDLE_VALUE or handle is None:
-                return True
-            return ((GetFileType(handle) & ~FILE_TYPE_REMOTE) != FILE_TYPE_CHAR
-                    or GetConsoleMode(handle, byref(DWORD())) == 0)
 
         old_stdout_fileno = None
         old_stderr_fileno = None
@@ -250,31 +251,14 @@ class CONSOLE_SCREEN_BUFFER_INFO(ctypes.Structure):
         ("dwMaximumWindowSize", COORD),
         ]
 
-_wait_for_input = False
-def set_wait_for_input():
-    global _wait_for_input
-    wfi = os.environ.get("XPRA_WAIT_FOR_INPUT")
-    if wfi is not None:
-        _wait_for_input = wfi!="0"
-        return
-    if is_wine():
-        #don't wait for input when running under wine
-        #(which usually does not popup a new shell window)
-        _wait_for_input = False
-        return
-    if os.environ.get("TERM", "")=="xterm":
-        #msys, cygwin and git bash environments don't popup a new shell window
-        #and they all set TERM=xterm
-        _wait_for_input = False
-        return
+def get_console_position(handle):
     try:
-        handle = GetStdHandle(STD_OUTPUT_HANDLE)
         #handle.SetConsoleTextAttribute(FOREGROUND_BLUE)
         csbi = CONSOLE_SCREEN_BUFFER_INFO()
         GetConsoleScreenBufferInfo(handle, byref(csbi))
         cpos = csbi.dwCursorPosition
         #wait for input if this is a brand new console:
-        _wait_for_input = cpos.X==0 and cpos.Y==0
+        return cpos.X and cpos.Y
     except:
         e = sys.exc_info()[1]
         code = -1
@@ -292,6 +276,49 @@ def set_wait_for_input():
                 print("error accessing console %s: %s" % (errno.errorcode.get(e.errno, e.errno), e))
             except:
                 print("error accessing console: %s" % e)
+        return -1, -1
+
+_wait_for_input = False
+def set_wait_for_input():
+    global _wait_for_input
+    _wait_for_input = should_wait_for_input()
+
+def should_wait_for_input():
+    wfi = os.environ.get("XPRA_WAIT_FOR_INPUT")
+    if wfi is not None:
+        return wfi!="0"
+    if is_wine():
+        #don't wait for input when running under wine
+        #(which usually does not popup a new shell window)
+        return False
+    if os.environ.get("TERM", "")=="xterm":
+        #msys, cygwin and git bash environments don't popup a new shell window
+        #and they all set TERM=xterm
+        return False
+    handle = GetStdHandle(STD_OUTPUT_HANDLE)
+    if not_a_console(handle):
+        return False
+    #wait for input if this is a brand new console:
+    return get_console_position(handle)==(0, 0)
+
+
+def setup_console_event_listener(handler, enable):
+    try:
+        from xpra.platform.win32.common import SetConsoleCtrlHandler, ConsoleCtrlHandler
+        from xpra.log import Logger
+        log = Logger("win32")
+        log("calling SetConsoleCtrlHandler(%s, %s)", handler, enable)
+        ctypes_handler = ConsoleCtrlHandler(handler)
+        result = SetConsoleCtrlHandler(ctypes_handler, enable)
+        log("SetConsoleCtrlHandler(%s, %s)=%s", handler, enable, result)
+        if result==0:
+            log.error("Error: could not %s console control handler:", "set" if enable else "unset")
+            log.error(" SetConsoleCtrlHandler: %r", ctypes.GetLastError())
+            return False
+        return True
+    except Exception as e:
+        log.error("SetConsoleCtrlHandler error: %s", e)
+        return False
 
 def do_init():
     if FIX_UNICODE_OUT:
