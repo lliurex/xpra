@@ -1,3 +1,9 @@
+xpra (3.0+lliurex2) bionic; urgency=medium
+
+  * Fix typerror on version_util.py
+
+ -- Juanma1980 <juanma1980@gmail.com>  Tue, 12 Nov 2019 15:40:45 +0100
+
 xpra (3.0+lliurex1) bionic; urgency=medium
 
   * Bionic port form svn code
