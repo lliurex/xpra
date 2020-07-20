@@ -1,3 +1,9 @@
+xpra (3.0+lliurex3) bionic; urgency=medium
+
+  * changing hwe-18.04 dependency
+
+ -- Hector Garcia Huerta <hectorgh@gmail.com>  Mon, 20 Jul 2020 08:52:04 +0200
+
 xpra (3.0+lliurex2) bionic; urgency=medium
 
   * Fix typerror on version_util.py
